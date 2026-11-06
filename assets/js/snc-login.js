@@ -1,4 +1,4 @@
-/** SNC 2018 Café & Resto | Login V8.4 | Frontend interactions only. */
+/** SNC 2018 Café & Resto | Login V8.5 | Frontend interactions only. */
 (() => {
   'use strict';
   const login = document.querySelector('.snc-login');
@@ -34,12 +34,30 @@
     status.textContent = '';
   }
 
+  let logoFlip = null;
+  function flipDreamcatcher() {
+    if (logoFlip) logoFlip.cancel();
+    // Animate the actual image, not the login card or surrounding layout.
+    // Respect OS accessibility settings without disabling portal switching.
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    logoFlip = emblem.animate(
+      [
+        { transform: 'rotateY(0deg)', offset: 0 },
+        { transform: 'rotateY(90deg)', offset: .25 },
+        { transform: 'rotateY(180deg)', offset: .5 },
+        { transform: 'rotateY(270deg)', offset: .75 },
+        { transform: 'rotateY(360deg)', offset: 1 }
+      ],
+      { duration: 1100, easing: 'ease-in-out', iterations: 1 }
+    );
+    logoFlip.onfinish = () => { logoFlip = null; };
+    logoFlip.oncancel = () => { logoFlip = null; };
+  }
+
   function setPortal(nextRole) {
     if (!['admin', 'staff'].includes(nextRole) || login.dataset.role === nextRole) return;
     applyPortal(nextRole);
-    emblem.classList.remove('is-flipping');
-    void emblem.offsetWidth;
-    emblem.classList.add('is-flipping');
+    flipDreamcatcher();
   }
 
   login.dataset.role = 'admin';
