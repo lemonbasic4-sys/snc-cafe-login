@@ -1,9 +1,9 @@
-/** SNC 2018 Café & Resto | Login V8.3 | Frontend interactions only. */
+/** SNC 2018 Café & Resto | Login V8.4 | Frontend interactions only. */
 (() => {
   'use strict';
   const login = document.querySelector('.snc-login');
   const form = document.getElementById('snc-login-form');
-  const emblem = document.querySelector('.snc-emblem-frame');
+  const emblem = document.querySelector('.snc-emblem');
   const roleButtons = document.querySelectorAll('[data-snc-role]');
   const portalLabel = document.getElementById('snc-portal-label');
   const portalValue = document.getElementById('snc-portal-value');
