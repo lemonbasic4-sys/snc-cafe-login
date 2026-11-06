@@ -1,8 +1,8 @@
-/* SNC 2018 Café & Resto | Login V8 | Bistre × Dreamcatcher */
-:root{--snc-bistre:#3d2b1f;--snc-mocha:#665044;--snc-ivory:#f8f1e9;--snc-gold:#d8b88a;--snc-ink:#382419;--snc-muted:#685344;--snc-border:#c8b29d;--snc-ease:cubic-bezier(.22,1,.36,1)}
+/* SNC 2018 Café & Resto | Login V8.1 | Bistre × Dreamcatcher */
+:root{--snc-bistre:#3d2b1f;--snc-mocha:#4e382d;--snc-ivory:#f8f1e9;--snc-gold:#d8b88a;--snc-ink:#382419;--snc-muted:#685344;--snc-border:#c8b29d;--snc-ease:cubic-bezier(.22,1,.36,1)}
 *,*::before,*::after{box-sizing:border-box}
 html{min-height:100%;font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif}
-body{margin:0;min-height:100vh;background:#eae0d4;color:var(--snc-ink)}
+body{margin:0;min-height:100vh;background:#e9ded1;color:var(--snc-ink)}
 button,input{font:inherit}button{cursor:pointer}
 button:focus-visible,input:focus-visible{outline:3px solid #a67a50;outline-offset:3px}
 .snc-page{min-height:100vh;display:grid;place-items:center;padding:28px}
@@ -10,7 +10,7 @@ button:focus-visible,input:focus-visible{outline:3px solid #a67a50;outline-offse
 .snc-brand-panel,.snc-form-panel{min-width:0;grid-row:1;transition:transform .65s var(--snc-ease)}
 .snc-brand-panel{grid-column:1;background:var(--snc-bistre);color:#fff8ef;display:grid;place-items:center;padding:30px 22px;z-index:2;transition:transform .65s var(--snc-ease),background-color .4s ease}
 .snc-form-panel{grid-column:2;display:grid;place-items:center;padding:36px 42px;z-index:1;background:var(--snc-ivory)}
-.snc-login[data-role="staff"] .snc-brand-panel{transform:translateX(100%);background:var(--snc-mocha)}
+.snc-login[data-role="staff"] .snc-brand-panel{transform:translateX(100%);background:#4e382d}
 .snc-login[data-role="staff"] .snc-form-panel{transform:translateX(-100%)}
 .snc-brand-content{display:flex;flex-direction:column;align-items:center;text-align:center;width:100%;max-width:320px}
 .snc-emblem-frame{width:76px;height:92px;perspective:700px;margin-bottom:10px}
@@ -48,3 +48,31 @@ button:focus-visible,input:focus-visible{outline:3px solid #a67a50;outline-offse
 @media(max-width:650px){.snc-page{padding:14px}.snc-login{display:flex;flex-direction:column;max-width:430px;min-height:0}.snc-brand-panel,.snc-form-panel{transform:none!important;transition:none}.snc-brand-panel{padding:23px 18px}.snc-emblem-frame{width:60px;height:75px}.snc-brand-title{font-size:26px}.snc-brand-divider{margin:13px 0}.snc-brand-footer{margin:13px 0 0}.snc-form-panel{padding:28px 25px 30px}.snc-form-heading{min-height:88px}}
 @media(max-width:350px){.snc-role-switch{grid-template-columns:1fr;max-width:200px}.snc-form-panel{padding:24px 17px}.snc-form-heading h2{font-size:24px}}
 @media(prefers-reduced-motion:reduce){.snc-emblem.is-flipping{animation:none}.snc-brand-panel,.snc-form-panel,.snc-submit,.snc-role-button{transition:none}}
+
+/* V8.1 visual refinement: darker staff portal, readable hierarchy, visible emblem flip */
+.snc-login{box-shadow:0 22px 60px #38241926}
+.snc-brand-panel{background:linear-gradient(145deg,#463023 0%,#322218 100%)}
+.snc-login[data-role="staff"] .snc-brand-panel{background:linear-gradient(145deg,#594033 0%,#402b22 100%)}
+.snc-emblem-frame{transform-style:preserve-3d;backface-visibility:visible;will-change:transform}
+.snc-emblem-frame.is-flipping{animation:snc-v81-flip 1.05s cubic-bezier(.45,.05,.25,1) both}
+.snc-emblem{filter:drop-shadow(0 2px 9px #d8b88a44)}
+@keyframes snc-v81-flip{0%{transform:rotateY(0deg)}35%{transform:rotateY(90deg) scale(.92)}65%{transform:rotateY(270deg) scale(.92)}100%{transform:rotateY(360deg)}}
+.snc-brand-title{font-size:34px;font-weight:600;letter-spacing:.2px}
+.snc-brand-category{font-size:12px;letter-spacing:2.1px;color:#e5c397}
+.snc-brand-description{font-size:13px;color:#f0dfcc}
+.snc-brand-footer{font-size:12px;color:#ecd6bc}
+.snc-role-button{font-size:12.5px;font-weight:700;border-color:#d8b88a}
+.snc-role-button:not(.is-active):hover{background:#ffffff17}
+.snc-role-button.is-active{background:#fff0dc;border-color:#fff0dc}
+.snc-portal-label{font-size:12px;letter-spacing:1.2px;color:#77502f}
+.snc-form-heading h2{font-size:30px;line-height:37px;font-weight:700}
+.snc-form-subtitle{font-size:13.5px;line-height:21px;color:#5b4637}
+.snc-form-field label{font-size:13px;color:#402c20}
+.snc-input-wrap input{font-size:14px}
+.snc-input-wrap input::placeholder{color:#786455}
+.snc-submit{font-size:14px;font-weight:750}
+.snc-login[data-role="staff"] .snc-submit{background:#4e382d}
+.snc-login[data-role="staff"] .snc-submit:hover{background:#654737}
+.snc-form-footer{font-size:12px;color:#685344}
+@media(max-width:650px){.snc-brand-title{font-size:28px}.snc-form-heading h2{font-size:28px}}
+@media(prefers-reduced-motion:reduce){.snc-emblem-frame.is-flipping{animation:none}}
