@@ -38,20 +38,40 @@
   function flipDreamcatcher() {
     if (logoFlip) logoFlip.cancel();
     // Animate the actual image, not the login card or surrounding layout.
-    // Respect OS accessibility settings without disabling portal switching.
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    logoFlip = emblem.animate(
-      [
-        { transform: 'rotateY(0deg)', offset: 0 },
-        { transform: 'rotateY(90deg)', offset: .25 },
-        { transform: 'rotateY(180deg)', offset: .5 },
-        { transform: 'rotateY(270deg)', offset: .75 },
-        { transform: 'rotateY(360deg)', offset: 1 }
-      ],
-      { duration: 1100, easing: 'ease-in-out', iterations: 1 }
-    );
-    logoFlip.onfinish = () => { logoFlip = null; };
-    logoFlip.oncancel = () => { logoFlip = null; };
+    // Keep a brief flip under reduced motion instead of silently skipping it.
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const duration = reducedMotion ? 260 : 1100;
+    const keyframes = [
+      { transform: 'rotateY(0deg)', offset: 0 },
+      { transform: 'rotateY(90deg)', offset: .25 },
+      { transform: 'rotateY(180deg)', offset: .5 },
+      { transform: 'rotateY(270deg)', offset: .75 },
+      { transform: 'rotateY(360deg)', offset: 1 }
+    ];
+
+    if (typeof emblem.animate === 'function') {
+      logoFlip = emblem.animate(keyframes, { duration, easing: 'ease-in-out', iterations: 1 });
+      logoFlip.onfinish = () => { logoFlip = null; };
+      logoFlip.oncancel = () => { logoFlip = null; };
+      return;
+    }
+
+    // Fallback for browsers without the Web Animations API.
+    emblem.classList.remove('is-flipping');
+    void emblem.offsetWidth;
+    emblem.classList.toggle('is-flipping-reduced', reducedMotion);
+    emblem.classList.add('is-flipping');
+    const finishFallback = () => {
+      emblem.classList.remove('is-flipping', 'is-flipping-reduced');
+      logoFlip = null;
+    };
+    emblem.addEventListener('animationend', finishFallback, { once: true });
+    logoFlip = {
+      cancel: () => {
+        emblem.removeEventListener('animationend', finishFallback);
+        finishFallback();
+      }
+    };
   }
 
   function setPortal(nextRole) {
