@@ -1,4 +1,4 @@
-/** SNC 2018 Café & Resto | Login V7 | Frontend interactions only. */
+/** SNC 2018 Café & Resto | Login V8 | Frontend interactions only. */
 (() => {
   'use strict';
   const login = document.querySelector('.snc-login');
@@ -11,7 +11,7 @@
   const password = document.getElementById('snc-password');
   const toggle = document.getElementById('snc-password-toggle');
   const status = document.getElementById('snc-form-status');
-  if (!login || !form || !emblem) return;
+  if (!login || !form || !emblem || !portalLabel || !portalValue || !subtitle || !password || !toggle || !status) return;
 
   function setPortal(nextRole) {
     if (!['admin', 'staff'].includes(nextRole) || login.dataset.role === nextRole) return;
@@ -25,7 +25,7 @@
       button.setAttribute('aria-pressed', String(active));
     });
     emblem.classList.remove('is-flipping');
-    void emblem.offsetWidth; // Restart animation on role change.
+    void emblem.offsetWidth;
     emblem.classList.add('is-flipping');
     form.reset();
     portalValue.value = nextRole;
