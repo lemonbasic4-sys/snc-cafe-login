@@ -54,9 +54,8 @@ button:focus-visible,input:focus-visible{outline:3px solid #a67a50;outline-offse
 .snc-brand-panel{background:linear-gradient(145deg,#463023 0%,#322218 100%)}
 .snc-login[data-role="staff"] .snc-brand-panel{background:linear-gradient(145deg,#594033 0%,#402b22 100%)}
 .snc-emblem-frame{transform-style:preserve-3d;backface-visibility:visible;will-change:transform}
-.snc-emblem-frame.is-flipping{animation:snc-v81-flip 1.05s cubic-bezier(.45,.05,.25,1) both}
+
 .snc-emblem{filter:drop-shadow(0 2px 9px #d8b88a44)}
-@keyframes snc-v81-flip{0%{transform:rotateY(0deg)}35%{transform:rotateY(90deg) scale(.92)}65%{transform:rotateY(270deg) scale(.92)}100%{transform:rotateY(360deg)}}
 .snc-brand-title{font-size:34px;font-weight:600;letter-spacing:.2px}
 .snc-brand-category{font-size:12px;letter-spacing:2.1px;color:#e5c397}
 .snc-brand-description{font-size:13px;color:#f0dfcc}
@@ -75,16 +74,20 @@ button:focus-visible,input:focus-visible{outline:3px solid #a67a50;outline-offse
 .snc-login[data-role="staff"] .snc-submit:hover{background:#654737}
 .snc-form-footer{font-size:12px;color:#685344}
 @media(max-width:650px){.snc-brand-title{font-size:28px}.snc-form-heading h2{font-size:28px}}
-@media(prefers-reduced-motion:reduce){.snc-emblem-frame.is-flipping{animation:none}}
+
 /* V8.3: fixed login layout; only the dreamcatcher emblem flips */
 .snc-login[data-role="staff"] .snc-brand-panel,
 .snc-login[data-role="staff"] .snc-form-panel{transform:none}
 .snc-brand-panel,.snc-form-panel{transition:none}
-.snc-emblem-frame{perspective:800px}
-.snc-emblem-frame.is-flipping{animation:snc-logo-only-flip .85s cubic-bezier(.35,.05,.25,1) both}
+.snc-emblem-frame{perspective:800px;transform-style:preserve-3d}
+.snc-emblem.is-flipping{animation:snc-logo-only-flip 1.05s cubic-bezier(.35,.05,.25,1) both;transform-origin:center center;backface-visibility:visible;will-change:transform}
 @keyframes snc-logo-only-flip{
   0%{transform:rotateY(0deg)}
+  25%{transform:rotateY(90deg)}
   50%{transform:rotateY(180deg)}
+  75%{transform:rotateY(270deg)}
   100%{transform:rotateY(360deg)}
 }
-@media(prefers-reduced-motion:reduce){.snc-emblem-frame.is-flipping{animation:none}}
+
+
+@media(prefers-reduced-motion:reduce){.snc-emblem.is-flipping{animation:none}}
