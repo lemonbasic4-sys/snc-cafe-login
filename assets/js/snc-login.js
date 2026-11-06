@@ -1,4 +1,4 @@
-/** SNC 2018 Café & Resto | Login V8.1 | Frontend interactions only. */
+/** SNC 2018 Café & Resto | Login V8.3 | Frontend interactions only. */
 (() => {
   'use strict';
   const login = document.querySelector('.snc-login');
@@ -34,21 +34,12 @@
     status.textContent = '';
   }
 
-  let flipTimer = null;
   function setPortal(nextRole) {
-    if (!['admin', 'staff'].includes(nextRole) || login.dataset.role === nextRole || login.classList.contains('snc-card-flipping')) return;
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      applyPortal(nextRole);
-      return;
-    }
-    login.classList.add('snc-card-flipping');
-    flipTimer = window.setTimeout(() => applyPortal(nextRole), 450);
-    const finish = () => {
-      login.classList.remove('snc-card-flipping');
-      login.removeEventListener('animationend', finish);
-      window.clearTimeout(flipTimer);
-    };
-    login.addEventListener('animationend', finish);
+    if (!['admin', 'staff'].includes(nextRole) || login.dataset.role === nextRole) return;
+    applyPortal(nextRole);
+    emblem.classList.remove('is-flipping');
+    void emblem.offsetWidth;
+    emblem.classList.add('is-flipping');
   }
 
   login.dataset.role = 'admin';
