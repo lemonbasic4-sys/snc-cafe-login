@@ -13,7 +13,7 @@
   const status = document.getElementById('snc-form-status');
   if (!login || !form || !emblem || !portalLabel || !portalValue || !subtitle || !password || !toggle || !status) return;
 
-  function setPortal(nextRole) {
+  function applyPortal(nextRole) {
     if (!['admin', 'staff'].includes(nextRole) || login.dataset.role === nextRole) return;
     login.dataset.role = nextRole;
     portalValue.value = nextRole;
@@ -24,9 +24,7 @@
       button.classList.toggle('is-active', active);
       button.setAttribute('aria-pressed', String(active));
     });
-    emblem.classList.remove('is-flipping');
-    void emblem.offsetWidth;
-    emblem.classList.add('is-flipping');
+
     form.reset();
     portalValue.value = nextRole;
     password.type = 'password';
@@ -34,6 +32,23 @@
     toggle.setAttribute('aria-label', 'Show password');
     toggle.setAttribute('aria-pressed', 'false');
     status.textContent = '';
+  }
+
+  let flipTimer = null;
+  function setPortal(nextRole) {
+    if (!['admin', 'staff'].includes(nextRole) || login.dataset.role === nextRole || login.classList.contains('snc-card-flipping')) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      applyPortal(nextRole);
+      return;
+    }
+    login.classList.add('snc-card-flipping');
+    flipTimer = window.setTimeout(() => applyPortal(nextRole), 450);
+    const finish = () => {
+      login.classList.remove('snc-card-flipping');
+      login.removeEventListener('animationend', finish);
+      window.clearTimeout(flipTimer);
+    };
+    login.addEventListener('animationend', finish);
   }
 
   login.dataset.role = 'admin';
