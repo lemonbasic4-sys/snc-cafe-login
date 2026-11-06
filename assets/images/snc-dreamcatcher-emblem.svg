@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 120" fill="none" stroke="#e5c397" stroke-width="1.5" aria-label="SNC dreamcatcher emblem">
+  <circle cx="50" cy="40" r="31"/><circle cx="50" cy="40" r="24"/>
+  <path d="M50 16 71 27 74 48 50 65 26 48 29 27Z M50 16 26 48 74 48Z M29 27 50 65 71 27Z"/>
+  <path d="M32 67V96M50 72V112M68 67V96"/>
+  <path d="M28 91Q32 105 36 91M46 106Q50 119 54 106M64 91Q68 105 72 91"/>
+  <circle cx="50" cy="40" r="4" fill="#e5c397"/>
+</svg>
