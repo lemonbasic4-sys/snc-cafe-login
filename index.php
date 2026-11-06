@@ -1,5 +1,5 @@
 <?php
-// SNC 2018 Café & Resto — Login interface entry point.
+// SNC 2018 Café & Resto — Login V8 interface entry point.
 // Authentication is intentionally not implemented in this frontend package.
 ?>
 <!DOCTYPE html>
