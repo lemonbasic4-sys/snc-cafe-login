@@ -76,11 +76,15 @@ button:focus-visible,input:focus-visible{outline:3px solid #a67a50;outline-offse
 .snc-form-footer{font-size:12px;color:#685344}
 @media(max-width:650px){.snc-brand-title{font-size:28px}.snc-form-heading h2{font-size:28px}}
 @media(prefers-reduced-motion:reduce){.snc-emblem-frame.is-flipping{animation:none}}
-
-/* V8.2: full login card flip, not just the emblem */
-.snc-login{transform-style:preserve-3d;backface-visibility:hidden}
-.snc-login.snc-card-flipping{animation:snc-card-flip .9s cubic-bezier(.45,.05,.25,1) both}
-@keyframes snc-card-flip{0%{transform:perspective(1600px) rotateY(0)}49%{transform:perspective(1600px) rotateY(89deg)}51%{transform:perspective(1600px) rotateY(-89deg)}100%{transform:perspective(1600px) rotateY(0)}}
-.snc-login.snc-card-flipping .snc-brand-panel,.snc-login.snc-card-flipping .snc-form-panel{transition:none}
-.snc-login .snc-emblem-frame.is-flipping{animation:none}
-@media(prefers-reduced-motion:reduce){.snc-login.snc-card-flipping{animation:none}}
+/* V8.3: fixed login layout; only the dreamcatcher emblem flips */
+.snc-login[data-role="staff"] .snc-brand-panel,
+.snc-login[data-role="staff"] .snc-form-panel{transform:none}
+.snc-brand-panel,.snc-form-panel{transition:none}
+.snc-emblem-frame{perspective:800px}
+.snc-emblem-frame.is-flipping{animation:snc-logo-only-flip .85s cubic-bezier(.35,.05,.25,1) both}
+@keyframes snc-logo-only-flip{
+  0%{transform:rotateY(0deg)}
+  50%{transform:rotateY(180deg)}
+  100%{transform:rotateY(360deg)}
+}
+@media(prefers-reduced-motion:reduce){.snc-emblem-frame.is-flipping{animation:none}}
