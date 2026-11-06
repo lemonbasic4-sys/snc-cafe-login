@@ -1,5 +1,5 @@
 <?php
-// SNC 2018 Café & Resto — Login V8 interface entry point.
+// SNC 2018 Café & Resto — Login V8.1 interface entry point.
 // Authentication is intentionally not implemented in this frontend package.
 ?>
 <!DOCTYPE html>
@@ -11,8 +11,8 @@
   <meta name="description" content="SNC 2018 Café & Resto management system sign-in">
   <title>Sign In | SNC 2018 Café & Resto</title>
   <link rel="icon" type="image/svg+xml" href="assets/images/snc-dreamcatcher-emblem.svg">
-  <link rel="stylesheet" href="assets/css/snc-login.css">
-  <script src="assets/js/snc-login.js" defer></script>
+  <link rel="stylesheet" href="assets/css/snc-login.css?v=8.1">
+  <script src="assets/js/snc-login.js?v=8.1" defer></script>
 </head>
 <body>
   <main class="snc-page">
