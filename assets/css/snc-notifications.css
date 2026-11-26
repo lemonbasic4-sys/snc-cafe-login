@@ -1,0 +1,196 @@
+/* SNC 2018 Café & Resto | System-Wide Notification Toasts */
+.snc-toast-region {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column-reverse;
+  gap: 10px;
+  width: min(360px, calc(100vw - 40px));
+  pointer-events: none;
+}
+
+.snc-toast {
+  pointer-events: auto;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: start;
+  gap: 11px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: #2f2118;
+  color: #fff8ef;
+  border: 1px solid #d8b88a38;
+  border-left: 4px solid #d8b88a;
+  box-shadow: 0 14px 32px #1a100a4d;
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
+  opacity: 0;
+  transform: translateX(calc(100% + 28px));
+  transition:
+    transform 0.34s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.28s ease;
+}
+
+.snc-toast.is-visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.snc-toast.is-leaving {
+  opacity: 0;
+  transform: translateX(calc(100% + 28px));
+}
+
+.snc-toast--success {
+  border-left-color: #58b985;
+}
+
+.snc-toast--error {
+  border-left-color: #e06c6c;
+}
+
+.snc-toast--warning {
+  border-left-color: #e3a84f;
+}
+
+.snc-toast--info {
+  border-left-color: #d8b88a;
+}
+
+.snc-toast__icon {
+  width: 20px;
+  height: 20px;
+  margin-top: 1px;
+  flex: none;
+  display: grid;
+  place-items: center;
+}
+
+.snc-toast__icon svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.snc-toast--success .snc-toast__icon { color: #6ad199; }
+.snc-toast--error .snc-toast__icon { color: #f08080; }
+.snc-toast--warning .snc-toast__icon { color: #f2bc64; }
+.snc-toast--info .snc-toast__icon { color: #d8b88a; }
+
+.snc-toast__body {
+  min-width: 0;
+}
+
+.snc-toast__title {
+  margin: 0 0 2px;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.3;
+  color: #fff8ef;
+}
+
+.snc-toast__message {
+  margin: 0;
+  font-size: 12.5px;
+  line-height: 1.4;
+  color: #ead8c5;
+  word-break: break-word;
+}
+
+.snc-toast__close {
+  appearance: none;
+  background: transparent;
+  border: 0;
+  color: #cdb69f;
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  padding: 0;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.snc-toast__close:hover {
+  background: #ffffff1a;
+  color: #fff8ef;
+}
+
+.snc-toast__close:focus-visible {
+  outline: 2px solid #d8b88a;
+  outline-offset: 2px;
+}
+
+.snc-toast__close svg {
+  width: 14px;
+  height: 14px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.2;
+  stroke-linecap: round;
+}
+
+/* Mobile: Dynamic Island style at top-center */
+@media (max-width: 650px) {
+  .snc-toast-region {
+    top: 12px;
+    bottom: auto;
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+    flex-direction: column;
+    align-items: center;
+    width: min(360px, calc(100vw - 24px));
+    gap: 8px;
+  }
+
+  .snc-toast {
+    width: auto;
+    max-width: 100%;
+    min-width: 220px;
+    align-items: center;
+    gap: 9px;
+    padding: 9px 14px;
+    border-radius: 999px;
+    border: 1px solid #d8b88a45;
+    border-left-width: 1px;
+    background: #241811;
+    box-shadow: 0 10px 26px #140c0766;
+    transform: translateY(-140%) scale(0.92);
+  }
+
+  .snc-toast.is-visible {
+    transform: translateY(0) scale(1);
+  }
+
+  .snc-toast.is-leaving {
+    transform: translateY(-140%) scale(0.92);
+  }
+
+  .snc-toast__title {
+    font-size: 12px;
+  }
+
+  .snc-toast__message {
+    font-size: 12px;
+    line-height: 1.3;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .snc-toast {
+    transform: none;
+    transition: opacity 0.15s ease;
+  }
+
+  .snc-toast.is-visible,
+  .snc-toast.is-leaving {
+    transform: none;
+  }
+}

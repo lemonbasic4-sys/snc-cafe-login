@@ -1,0 +1,381 @@
+/* SNC 2018 Café & Resto | Owner Dashboard V5.1 */
+.snc-dashboard {
+  padding: 20px 24px 28px;
+  max-width: 1360px;
+  width: 100%;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.snc-dashboard__header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+
+.snc-dashboard__title {
+  margin: 0;
+  font: 700 26px/1.2 Georgia, serif;
+  color: var(--snc-color-bistre);
+  letter-spacing: -0.2px;
+}
+
+.snc-dashboard__subtitle {
+  margin: 4px 0 0;
+  font-size: 13px;
+  color: var(--snc-color-mocha);
+}
+
+.snc-period-bar {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px;
+  border-radius: var(--snc-radius-md);
+  background: #efe4d6;
+  border: 1px solid var(--snc-color-border);
+}
+
+.snc-period-btn {
+  height: 32px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: var(--snc-radius-sm);
+  background: transparent;
+  color: var(--snc-text-secondary);
+  font-size: 12.5px;
+  font-weight: 600;
+  white-space: nowrap;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.snc-period-btn:hover {
+  color: var(--snc-text-primary);
+}
+
+.snc-period-btn.is-active {
+  background: var(--snc-color-bistre);
+  color: var(--snc-text-on-dark);
+}
+
+/* KPI Row: Fixed geometry + tabular numerals */
+.snc-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.snc-kpi-card {
+  background: var(--snc-color-surface);
+  border: 1px solid var(--snc-color-border);
+  border-radius: var(--snc-radius-lg);
+  padding: 15px 16px;
+  min-height: 108px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: var(--snc-shadow-card);
+}
+
+.snc-kpi-card__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.snc-kpi-card__label {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--snc-text-secondary);
+}
+
+.snc-kpi-card__icon {
+  width: 28px;
+  height: 28px;
+  border-radius: var(--snc-radius-sm);
+  background: #f3e8da;
+  color: var(--snc-color-bistre);
+  display: grid;
+  place-items: center;
+  flex: none;
+}
+
+.snc-kpi-card__icon svg {
+  width: 15px;
+  height: 15px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.snc-kpi-card__value {
+  margin: 8px 0 4px;
+  font-size: 24px;
+  font-weight: 750;
+  line-height: 1.15;
+  color: var(--snc-text-primary);
+  font-variant-numeric: tabular-nums;
+}
+
+.snc-kpi-card__meta {
+  margin: 0;
+  font-size: 11.5px;
+  color: var(--snc-text-secondary);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Cards & Grids */
+.snc-grid-primary {
+  display: grid;
+  grid-template-columns: minmax(0, 1.65fr) minmax(0, 1fr);
+  gap: 16px;
+}
+
+.snc-grid-secondary {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.snc-card {
+  background: var(--snc-color-surface);
+  border: 1px solid var(--snc-color-border);
+  border-radius: var(--snc-radius-lg);
+  padding: 16px 18px;
+  box-shadow: var(--snc-shadow-card);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.snc-card__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.snc-card__title {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--snc-text-primary);
+}
+
+.snc-card__subtitle {
+  margin: 2px 0 0;
+  font-size: 12px;
+  color: var(--snc-text-secondary);
+}
+
+.snc-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: #f3e8da;
+  color: var(--snc-text-secondary);
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+/* Revenue Chart (fixed container height prevents vertical jumps) */
+.snc-chart-box {
+  height: 220px;
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  align-items: end;
+  gap: 10px;
+  padding: 14px 8px 4px;
+  border-radius: var(--snc-radius-md);
+  background: #fbf6ef;
+  border: 1px solid #eadecf;
+}
+
+.snc-chart-col {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+.snc-chart-col__val {
+  font-size: 10.5px;
+  font-weight: 600;
+  color: var(--snc-text-secondary);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.snc-chart-col__track {
+  width: 100%;
+  max-width: 34px;
+  flex: 1 1 auto;
+  display: flex;
+  align-items: flex-end;
+}
+
+.snc-chart-col__bar {
+  width: 100%;
+  border-radius: 6px 6px 2px 2px;
+  background: linear-gradient(180deg, var(--snc-color-mocha), var(--snc-color-bistre));
+  min-height: 6px;
+  transition: height 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.snc-chart-col__label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--snc-text-secondary);
+}
+
+/* Attention & Lists */
+.snc-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.snc-list-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: var(--snc-radius-md);
+  background: #fbf6ef;
+  border: 1px solid #eadecf;
+}
+
+.snc-list-item__main {
+  min-width: 0;
+}
+
+.snc-list-item__title {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 650;
+  color: var(--snc-text-primary);
+}
+
+.snc-list-item__desc {
+  margin: 2px 0 0;
+  font-size: 11.5px;
+  color: var(--snc-text-secondary);
+}
+
+.snc-list-item__metric {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--snc-text-primary);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* Read-only Live Operations Summary */
+.snc-ops-strip {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.snc-ops-stat {
+  padding: 12px;
+  border-radius: var(--snc-radius-md);
+  background: #fbf6ef;
+  border: 1px solid #eadecf;
+  text-align: center;
+}
+
+.snc-ops-stat__num {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 750;
+  color: var(--snc-text-primary);
+  font-variant-numeric: tabular-nums;
+}
+
+.snc-ops-stat__label {
+  margin: 3px 0 0;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--snc-text-secondary);
+}
+
+/* Recent Activity Table */
+.snc-table-wrap {
+  overflow-x: auto;
+}
+
+.snc-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12.5px;
+}
+
+.snc-table th,
+.snc-table td {
+  text-align: left;
+  padding: 9px 10px;
+  border-bottom: 1px solid #ede2d4;
+  white-space: nowrap;
+}
+
+.snc-table th {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--snc-text-secondary);
+}
+
+.snc-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+@media (max-width: 1024px) {
+  .snc-kpi-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .snc-grid-primary,
+  .snc-grid-secondary {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 650px) {
+  .snc-dashboard {
+    padding: 16px;
+  }
+
+  .snc-dashboard__title {
+    font-size: 22px;
+  }
+
+  .snc-kpi-grid,
+  .snc-ops-strip {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .snc-chart-col__bar,
+  .snc-period-btn {
+    transition: none;
+  }
+}

@@ -11,7 +11,8 @@
   const password = document.getElementById('snc-password');
   const toggle = document.getElementById('snc-password-toggle');
   const status = document.getElementById('snc-form-status');
-  if (!login || !form || !emblem || !portalLabel || !portalValue || !subtitle || !password || !toggle || !status) return;
+  const submitButton = form ? form.querySelector('.snc-submit') : null;
+  if (!login || !form || !emblem || !portalLabel || !portalValue || !subtitle || !password || !toggle || !status || !submitButton) return;
 
   function applyPortal(nextRole) {
     if (!['admin', 'staff'].includes(nextRole) || login.dataset.role === nextRole) return;
@@ -80,7 +81,9 @@
     flipDreamcatcher();
   }
 
-  login.dataset.role = 'admin';
+  const initialRole = ['admin', 'staff'].includes(login.dataset.role) ? login.dataset.role : 'admin';
+  login.dataset.role = initialRole;
+  portalValue.value = initialRole;
   roleButtons.forEach(button => button.addEventListener('click', () => setPortal(button.dataset.sncRole)));
   toggle.addEventListener('click', () => {
     const isVisible = password.type === 'password';
@@ -89,8 +92,39 @@
     toggle.setAttribute('aria-label', isVisible ? 'Hide password' : 'Show password');
     toggle.setAttribute('aria-pressed', String(isVisible));
   });
-  form.addEventListener('submit', event => {
+  form.addEventListener('submit', async event => {
     event.preventDefault();
-    status.textContent = 'Sign-in is unavailable until secure authentication is configured.';
+    status.textContent = '';
+    submitButton.disabled = true;
+    const defaultLabel = submitButton.textContent;
+    submitButton.textContent = 'Signing In...';
+
+    try {
+      const response = await fetch(form.getAttribute('action') || 'api/login.php', {
+        method: 'POST',
+        body: new FormData(form),
+        headers: { Accept: 'application/json' }
+      });
+
+      const data = await response.json().catch(() => null);
+      if (response.ok && data && data.ok && data.redirect) {
+        status.textContent = 'Signing in...';
+        window.location.assign(data.redirect);
+        return;
+      }
+
+      const errorMessage = (data && data.message)
+        ? data.message
+        : 'Unable to sign in right now. Please try again.';
+      status.textContent = errorMessage;
+      if (window.SncToast) window.SncToast.error(errorMessage, 'Sign In Failed');
+    } catch (error) {
+      const networkMessage = 'Network error. Please check your connection and try again.';
+      status.textContent = networkMessage;
+      if (window.SncToast) window.SncToast.error(networkMessage, 'Connection Error');
+    } finally {
+      submitButton.disabled = false;
+      submitButton.textContent = defaultLabel;
+    }
   });
 })();

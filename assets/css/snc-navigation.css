@@ -1,0 +1,373 @@
+/* SNC 2018 Café & Resto | Approved Collapsible Sidebar & Shell */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+  background: var(--snc-color-ivory);
+  color: var(--snc-text-primary);
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+button {
+  font: inherit;
+  cursor: pointer;
+}
+
+button:focus-visible,
+a:focus-visible {
+  outline: 3px solid #a67a50;
+  outline-offset: 2px;
+}
+
+.snc-shell {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* Desktop Sidebar: expands to 248px, collapses completely to 0px (no icon rail) */
+.snc-sidebar {
+  width: var(--snc-sidebar-width);
+  flex: 0 0 var(--snc-sidebar-width);
+  background: var(--snc-color-bistre);
+  color: var(--snc-text-on-dark);
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid #2b1d14;
+  overflow: hidden;
+  transition:
+    width var(--snc-transition-standard),
+    flex-basis var(--snc-transition-standard),
+    border-color var(--snc-transition-standard);
+}
+
+.snc-shell.is-sidebar-closed .snc-sidebar {
+  width: 0;
+  flex-basis: 0;
+  border-right-color: transparent;
+}
+
+.snc-sidebar__inner {
+  width: var(--snc-sidebar-width);
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 18px 14px 16px;
+}
+
+.snc-sidebar__brand {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 4px 6px 16px;
+  border-bottom: 1px solid #ffffff1c;
+}
+
+.snc-sidebar__emblem {
+  width: 34px;
+  height: 40px;
+  flex: none;
+  object-fit: contain;
+}
+
+.snc-sidebar__brand-text {
+  min-width: 0;
+}
+
+.snc-sidebar__title {
+  margin: 0;
+  font: 600 18px/1.15 Georgia, serif;
+  color: var(--snc-text-on-dark);
+  white-space: nowrap;
+}
+
+.snc-sidebar__subtitle {
+  margin: 2px 0 0;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.6px;
+  color: var(--snc-color-gold);
+  white-space: nowrap;
+}
+
+.snc-sidebar__nav {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  padding: 14px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.snc-nav-group__label {
+  margin: 0 0 6px;
+  padding: 0 10px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.4px;
+  color: #cfb79d;
+}
+
+.snc-nav-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.snc-nav-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: var(--snc-radius-md);
+  color: #f3e4d3;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 500;
+  white-space: nowrap;
+  transition: background-color 0.16s ease, color 0.16s ease;
+}
+
+.snc-nav-link svg {
+  width: 16px;
+  height: 16px;
+  flex: none;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.85;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.snc-nav-link:hover {
+  background: #ffffff14;
+  color: #ffffff;
+}
+
+.snc-nav-link.is-active {
+  background: var(--snc-color-gold);
+  color: var(--snc-text-primary);
+  font-weight: 700;
+}
+
+.snc-nav-link.is-planned {
+  opacity: 0.78;
+}
+
+.snc-nav-badge {
+  margin-left: auto;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: #ffffff1a;
+  color: #e9d2b7;
+}
+
+.snc-sidebar__footer {
+  border-top: 1px solid #ffffff1c;
+  padding-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.snc-sidebar__user {
+  padding: 0 6px;
+}
+
+.snc-sidebar__user-name {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--snc-text-on-dark);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.snc-sidebar__user-role {
+  margin: 2px 0 0;
+  font-size: 11px;
+  color: var(--snc-text-on-dark-muted);
+}
+
+.snc-logout-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 36px;
+  border: 1px solid #d8b88a55;
+  border-radius: var(--snc-radius-md);
+  background: transparent;
+  color: var(--snc-text-on-dark);
+  font-size: 12.5px;
+  font-weight: 600;
+  transition: background-color 0.16s ease, border-color 0.16s ease;
+}
+
+.snc-logout-btn:hover {
+  background: #ffffff14;
+  border-color: var(--snc-color-gold);
+}
+
+.snc-logout-btn svg {
+  width: 15px;
+  height: 15px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Main workspace */
+.snc-workspace {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.snc-topbar {
+  height: var(--snc-topbar-height);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 0 22px;
+  background: var(--snc-color-ivory);
+  border-bottom: 1px solid var(--snc-color-border);
+  position: sticky;
+  top: 0;
+  z-index: 20;
+}
+
+.snc-topbar__left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.snc-sidebar-toggle {
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--snc-color-border);
+  border-radius: var(--snc-radius-md);
+  background: var(--snc-color-surface);
+  color: var(--snc-text-primary);
+  display: grid;
+  place-items: center;
+  flex: none;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.snc-sidebar-toggle:hover {
+  background: #f1e6d8;
+  border-color: #bfa890;
+}
+
+.snc-sidebar-toggle svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.snc-topbar__crumb {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--snc-text-secondary);
+  white-space: nowrap;
+}
+
+.snc-topbar__right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.snc-demo-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: #efe3d3;
+  border: 1px solid #d4be9f;
+  color: var(--snc-text-primary);
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.snc-sidebar-backdrop {
+  display: none;
+}
+
+/* Tablet / Narrow Layout: Overlay Drawer with Backdrop */
+@media (max-width: 960px) {
+  .snc-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    z-index: 50;
+    width: var(--snc-sidebar-width);
+    flex: none;
+    transform: translateX(-100%);
+    transition: transform var(--snc-transition-standard);
+  }
+
+  .snc-shell.is-sidebar-mobile-open .snc-sidebar {
+    transform: translateX(0);
+  }
+
+  .snc-shell.is-sidebar-closed .snc-sidebar {
+    width: var(--snc-sidebar-width);
+    transform: translateX(-100%);
+  }
+
+  .snc-sidebar-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 40;
+    background: #1a100a73;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.22s ease;
+  }
+
+  .snc-shell.is-sidebar-mobile-open .snc-sidebar-backdrop {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .snc-topbar {
+    padding: 0 16px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .snc-sidebar,
+  .snc-sidebar-backdrop,
+  .snc-nav-link,
+  .snc-sidebar-toggle {
+    transition: none;
+  }
+}
