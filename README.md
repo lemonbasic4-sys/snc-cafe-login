@@ -484,3 +484,11 @@ snc-cafe-login/
 Future modules should extend the structure without unnecessary renames or unused placeholder files.
 
 **Naming rules:** lowercase, kebab-case filenames, `snc-` prefixes for branded assets and CSS classes, "# snc-cafe-login" 
+
+
+usernames
+admin
+cashier1
+kitchen1
+
+lahat ng users password and password by default
