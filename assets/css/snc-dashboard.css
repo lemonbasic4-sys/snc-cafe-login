@@ -201,6 +201,16 @@
   border: 1px solid #eadecf;
 }
 
+.snc-chart-box--empty {
+  place-items: center;
+  color: var(--snc-text-secondary);
+  font-size: 13px;
+}
+
+.snc-chart-box--empty p {
+  margin: 0;
+}
+
 .snc-chart-col {
   height: 100%;
   display: flex;

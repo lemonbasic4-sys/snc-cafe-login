@@ -51,7 +51,6 @@ try {
   <link rel="stylesheet" href="../assets/css/snc-notifications.css?v=1.0">
   <script src="../assets/js/snc-notifications.js?v=1.0" defer></script>
   <script src="../assets/js/snc-navigation.js?v=1.0" defer></script>
-  <script src="../assets/js/snc-dashboard.js?v=1.0" defer></script>
 </head>
 <body<?= $flash ? ' data-snc-flash="' . htmlspecialchars((string) json_encode($flash), ENT_QUOTES, 'UTF-8') . '"' : '' ?>>
   <div class="snc-shell" id="snc-shell">
@@ -191,9 +190,6 @@ try {
           </button>
           <span class="snc-topbar__crumb">Owner Workspace · Overview</span>
         </div>
-        <div class="snc-topbar__right">
-          <span class="snc-demo-pill" title="Financial and order metrics below are prototype placeholders until POS and Kitchen modules are connected">Demo Data · Financial Prototype</span>
-        </div>
       </header>
 
       <main class="snc-dashboard">
@@ -201,11 +197,6 @@ try {
           <div>
             <h1 class="snc-dashboard__title" id="snc-overview-heading">Business Overview</h1>
             <p class="snc-dashboard__subtitle">Financial-first oversight for SNC 2018 Café &amp; Resto</p>
-          </div>
-          <div class="snc-period-bar" role="group" aria-label="Reporting period">
-            <button class="snc-period-btn is-active" type="button" data-period="today" aria-pressed="true">Today</button>
-            <button class="snc-period-btn" type="button" data-period="week" aria-pressed="false">This Week</button>
-            <button class="snc-period-btn" type="button" data-period="month" aria-pressed="false">This Month</button>
           </div>
         </section>
 
@@ -217,8 +208,8 @@ try {
                 <svg viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
               </span>
             </div>
-            <p class="snc-kpi-card__value" id="snc-kpi-net-sales">₱18,450.00</p>
-            <p class="snc-kpi-card__meta">Demo Data · Net of discounts</p>
+            <p class="snc-kpi-card__value">&mdash;</p>
+            <p class="snc-kpi-card__meta">No sales data available</p>
           </article>
 
           <article class="snc-kpi-card">
@@ -228,8 +219,8 @@ try {
                 <svg viewBox="0 0 24 24"><path d="m9 11 3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
               </span>
             </div>
-            <p class="snc-kpi-card__value" id="snc-kpi-orders">64</p>
-            <p class="snc-kpi-card__meta">Demo Data · Paid &amp; fulfilled</p>
+            <p class="snc-kpi-card__value">&mdash;</p>
+            <p class="snc-kpi-card__meta">No completed orders yet</p>
           </article>
 
           <article class="snc-kpi-card">
@@ -239,8 +230,8 @@ try {
                 <svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
               </span>
             </div>
-            <p class="snc-kpi-card__value" id="snc-kpi-aov">₱288.28</p>
-            <p class="snc-kpi-card__meta">Demo Data · Net Sales ÷ orders</p>
+            <p class="snc-kpi-card__value">&mdash;</p>
+            <p class="snc-kpi-card__meta">No sales data available</p>
           </article>
 
           <article class="snc-kpi-card">
@@ -250,8 +241,8 @@ try {
                 <svg viewBox="0 0 24 24"><path d="M12 3 2.5 19.5h19L12 3z"/><path d="M12 10v4M12 17.5h.01"/></svg>
               </span>
             </div>
-            <p class="snc-kpi-card__value" id="snc-kpi-attention">2</p>
-            <p class="snc-kpi-card__meta">Demo Data · Pending review</p>
+            <p class="snc-kpi-card__value">&mdash;</p>
+            <p class="snc-kpi-card__meta">No pending review records</p>
           </article>
         </section>
 
@@ -260,39 +251,11 @@ try {
             <div class="snc-card__head">
               <div>
                 <h2 class="snc-card__title">Revenue Performance</h2>
-                <p class="snc-card__subtitle" id="snc-chart-subtitle">Hourly revenue performance (Today)</p>
+              <p class="snc-card__subtitle">Sales trend will appear after transactions are recorded.</p>
               </div>
-              <span class="snc-tag" id="snc-chart-comparison">Demo Data · +8.4% vs. yesterday</span>
             </div>
-            <div class="snc-chart-box" aria-label="Revenue trend chart">
-              <svg viewBox="0 0 560 185" width="100%" height="100%" role="img" aria-label="Revenue bar chart">
-                <g fill="#3d2b1f">
-                  <rect class="snc-svg-bar" x="22" y="90" width="38" height="62" rx="6" />
-                  <rect class="snc-svg-bar" x="98" y="60" width="38" height="92" rx="6" />
-                  <rect class="snc-svg-bar" x="174" y="24" width="38" height="128" rx="6" />
-                  <rect class="snc-svg-bar" x="250" y="74" width="38" height="78" rx="6" />
-                  <rect class="snc-svg-bar" x="326" y="48" width="38" height="104" rx="6" />
-                  <rect class="snc-svg-bar" x="402" y="88" width="38" height="64" rx="6" />
-                  <rect class="snc-svg-bar" x="478" y="128" width="38" height="24" rx="6" />
-                </g>
-                <g fill="#685344" font-size="11" font-weight="600" text-anchor="middle">
-                  <text class="snc-svg-val" x="41" y="16">₱1.8k</text>
-                  <text class="snc-svg-val" x="117" y="16">₱3.2k</text>
-                  <text class="snc-svg-val" x="193" y="16">₱4.4k</text>
-                  <text class="snc-svg-val" x="269" y="16">₱2.6k</text>
-                  <text class="snc-svg-val" x="345" y="16">₱3.6k</text>
-                  <text class="snc-svg-val" x="421" y="16">₱2.1k</text>
-                  <text class="snc-svg-val" x="497" y="16">₱0.8k</text>
-
-                  <text class="snc-svg-label" x="41" y="174">9A</text>
-                  <text class="snc-svg-label" x="117" y="174">11A</text>
-                  <text class="snc-svg-label" x="193" y="174">1P</text>
-                  <text class="snc-svg-label" x="269" y="174">3P</text>
-                  <text class="snc-svg-label" x="345" y="174">5P</text>
-                  <text class="snc-svg-label" x="421" y="174">7P</text>
-                  <text class="snc-svg-label" x="497" y="174">9P</text>
-                </g>
-              </svg>
+            <div class="snc-chart-box snc-chart-box--empty" aria-label="Revenue trend chart">
+              <p>No sales data available yet.</p>
             </div>
           </article>
 
@@ -302,24 +265,9 @@ try {
                 <h2 class="snc-card__title">Owner Attention</h2>
                 <p class="snc-card__subtitle">Exceptions and approvals awaiting review</p>
               </div>
-              <span class="snc-tag">Demo Data</span>
+              <span class="snc-tag">No data</span>
             </div>
-            <ul class="snc-list">
-              <li class="snc-list-item">
-                <div class="snc-list-item__main">
-                  <p class="snc-list-item__title">Low Stock: Whole Milk</p>
-                  <p class="snc-list-item__desc">Inventory threshold alert · Planned module</p>
-                </div>
-                <span class="snc-list-item__metric">4 L left</span>
-              </li>
-              <li class="snc-list-item">
-                <div class="snc-list-item__main">
-                  <p class="snc-list-item__title">Void Request #1042</p>
-                  <p class="snc-list-item__desc">Awaiting owner approval · Planned module</p>
-                </div>
-                <span class="snc-list-item__metric">₱320.00</span>
-              </li>
-            </ul>
+            <p class="snc-card__subtitle">No owner attention records available yet.</p>
           </article>
         </section>
 
@@ -330,31 +278,9 @@ try {
                 <h2 class="snc-card__title">Best-Selling Products</h2>
                 <p class="snc-card__subtitle">Ranked by Net Sales</p>
               </div>
-              <span class="snc-tag">Demo Data</span>
+              <span class="snc-tag">No data</span>
             </div>
-            <ul class="snc-list" id="snc-bestsellers-list">
-              <li class="snc-list-item">
-                <div class="snc-list-item__main">
-                  <p class="snc-list-item__title">Iced Spanish Latte</p>
-                  <p class="snc-list-item__desc">24 sold · Beverages</p>
-                </div>
-                <span class="snc-list-item__metric">₱3,840.00</span>
-              </li>
-              <li class="snc-list-item">
-                <div class="snc-list-item__main">
-                  <p class="snc-list-item__title">Bistre Cold Brew</p>
-                  <p class="snc-list-item__desc">18 sold · Beverages</p>
-                </div>
-                <span class="snc-list-item__metric">₱2,880.00</span>
-              </li>
-              <li class="snc-list-item">
-                <div class="snc-list-item__main">
-                  <p class="snc-list-item__title">Truffle Cream Pasta</p>
-                  <p class="snc-list-item__desc">11 sold · Kitchen</p>
-                </div>
-                <span class="snc-list-item__metric">₱3,520.00</span>
-              </li>
-            </ul>
+            <p class="snc-card__subtitle">No sales data available yet.</p>
           </article>
 
           <article class="snc-card">
