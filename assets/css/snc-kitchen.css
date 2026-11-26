@@ -1,0 +1,271 @@
+/* SNC 2018 Café & Resto | Kitchen Orders Workspace */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+  background: var(--snc-color-ivory);
+  color: var(--snc-text-primary);
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+button {
+  font: inherit;
+  cursor: pointer;
+}
+
+button:focus-visible {
+  outline: 3px solid #a67a50;
+  outline-offset: 2px;
+}
+
+.snc-kitchen-bar {
+  height: 56px;
+  background: var(--snc-color-bistre);
+  color: var(--snc-text-on-dark);
+  padding: 0 22px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.snc-kitchen-bar__brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.snc-kitchen-bar__emblem {
+  width: 28px;
+  height: 34px;
+  object-fit: contain;
+}
+
+.snc-kitchen-bar__title {
+  margin: 0;
+  font: 600 17px/1.2 Georgia, serif;
+  color: var(--snc-text-on-dark);
+}
+
+.snc-kitchen-bar__sub {
+  margin: 0;
+  font-size: 11px;
+  color: var(--snc-color-gold);
+}
+
+.snc-kitchen-bar__actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.snc-kitchen-bar__user {
+  font-size: 12.5px;
+  color: var(--snc-text-on-dark-muted);
+}
+
+.snc-kitchen-logout {
+  height: 34px;
+  padding: 0 12px;
+  border: 1px solid #d8b88a66;
+  border-radius: var(--snc-radius-md);
+  background: transparent;
+  color: var(--snc-text-on-dark);
+  font-size: 12px;
+  font-weight: 650;
+}
+
+.snc-kitchen-logout:hover {
+  background: #ffffff17;
+  border-color: var(--snc-color-gold);
+}
+
+.snc-kitchen-main {
+  max-width: 1360px;
+  margin: 0 auto;
+  padding: 18px 22px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.snc-kitchen-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.snc-kitchen-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.snc-kitchen-tab {
+  height: 34px;
+  padding: 0 14px;
+  border: 1px solid var(--snc-color-border);
+  border-radius: 999px;
+  background: var(--snc-color-surface);
+  color: var(--snc-text-secondary);
+  font-size: 12.5px;
+  font-weight: 650;
+}
+
+.snc-kitchen-tab.is-active {
+  background: var(--snc-color-bistre);
+  border-color: var(--snc-color-bistre);
+  color: var(--snc-text-on-dark);
+}
+
+.snc-kitchen-refresh {
+  height: 34px;
+  padding: 0 14px;
+  border: 1px solid var(--snc-color-border);
+  border-radius: var(--snc-radius-md);
+  background: var(--snc-color-surface);
+  color: var(--snc-text-primary);
+  font-size: 12.5px;
+  font-weight: 650;
+}
+
+.snc-kitchen-refresh:hover {
+  background: #f1e6d8;
+}
+
+.snc-ticket-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+  gap: 14px;
+}
+
+.snc-ticket {
+  background: var(--snc-color-surface);
+  border: 1px solid var(--snc-color-border);
+  border-top: 4px solid var(--snc-color-bistre);
+  border-radius: var(--snc-radius-lg);
+  padding: 14px 16px;
+  box-shadow: var(--snc-shadow-card);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.snc-ticket--preparing {
+  border-top-color: var(--snc-status-warning);
+}
+
+.snc-ticket--ready {
+  border-top-color: var(--snc-status-success);
+}
+
+.snc-ticket__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.snc-ticket__num {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 750;
+  font-variant-numeric: tabular-nums;
+}
+
+.snc-ticket__meta {
+  margin: 2px 0 0;
+  font-size: 12px;
+  color: var(--snc-text-secondary);
+}
+
+.snc-ticket__badge {
+  padding: 3px 9px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  background: #efe3d3;
+  color: var(--snc-text-primary);
+  white-space: nowrap;
+}
+
+.snc-ticket--preparing .snc-ticket__badge {
+  background: #fae8cc;
+  color: #7c4c0c;
+}
+
+.snc-ticket--ready .snc-ticket__badge {
+  background: #dcf2e5;
+  color: #1f593b;
+}
+
+.snc-ticket__items {
+  list-style: none;
+  margin: 0;
+  padding: 10px 0;
+  border-top: 1px solid #ede2d4;
+  border-bottom: 1px solid #ede2d4;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.snc-ticket__item {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.snc-ticket__qty {
+  font-weight: 750;
+  color: var(--snc-color-bistre);
+  font-variant-numeric: tabular-nums;
+}
+
+.snc-ticket__btn {
+  height: 38px;
+  border: 0;
+  border-radius: var(--snc-radius-md);
+  background: var(--snc-color-bistre);
+  color: var(--snc-text-on-dark);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.snc-ticket__btn:hover {
+  background: var(--snc-color-mocha-soft);
+}
+
+.snc-ticket__btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.snc-kitchen-empty {
+  grid-column: 1 / -1;
+  background: var(--snc-color-surface);
+  border: 1px solid var(--snc-color-border);
+  border-radius: var(--snc-radius-lg);
+  padding: 36px 20px;
+  text-align: center;
+  color: var(--snc-text-secondary);
+  font-size: 13.5px;
+}
+
+@media (max-width: 650px) {
+  .snc-kitchen-main {
+    padding: 14px;
+  }
+}

@@ -9,6 +9,7 @@ $csrfToken = snc_csrf_token();
 $flash = snc_pop_flash();
 
 $recentLogs = [];
+$opsCounts = ['pending' => 0, 'preparing' => 0, 'ready' => 0];
 try {
     $pdo = snc_get_db();
     $stmt = $pdo->query(
@@ -18,6 +19,21 @@ try {
          LIMIT 5'
     );
     $recentLogs = $stmt->fetchAll();
+
+    $opsStmt = $pdo->query(
+        "SELECT
+           SUM(CASE WHEN kitchen_status = 'pending' THEN 1 ELSE 0 END) AS pending_count,
+           SUM(CASE WHEN kitchen_status = 'preparing' THEN 1 ELSE 0 END) AS preparing_count,
+           SUM(CASE WHEN kitchen_status = 'ready' THEN 1 ELSE 0 END) AS ready_count
+         FROM orders
+         WHERE payment_status = 'paid'"
+    );
+    $opsRow = $opsStmt->fetch();
+    if ($opsRow) {
+        $opsCounts['pending'] = (int) ($opsRow['pending_count'] ?? 0);
+        $opsCounts['preparing'] = (int) ($opsRow['preparing_count'] ?? 0);
+        $opsCounts['ready'] = (int) ($opsRow['ready_count'] ?? 0);
+    }
 } catch (Throwable $e) {
     $recentLogs = [];
 }
@@ -351,19 +367,19 @@ try {
             </div>
             <div class="snc-ops-strip">
               <div class="snc-ops-stat">
-                <p class="snc-ops-stat__num">0</p>
-                <p class="snc-ops-stat__label">Active Orders</p>
+                <p class="snc-ops-stat__num"><?= $opsCounts['pending'] ?></p>
+                <p class="snc-ops-stat__label">Pending</p>
               </div>
               <div class="snc-ops-stat">
-                <p class="snc-ops-stat__num">0</p>
+                <p class="snc-ops-stat__num"><?= $opsCounts['preparing'] ?></p>
                 <p class="snc-ops-stat__label">Preparing</p>
               </div>
               <div class="snc-ops-stat">
-                <p class="snc-ops-stat__num">0</p>
+                <p class="snc-ops-stat__num"><?= $opsCounts['ready'] ?></p>
                 <p class="snc-ops-stat__label">Ready</p>
               </div>
             </div>
-            <p class="snc-card__subtitle">Showing `0` until Cashier POS and Kitchen Orders are connected.</p>
+            <p class="snc-card__subtitle">Live read-only counts from `orders`.</p>
           </article>
         </section>
 

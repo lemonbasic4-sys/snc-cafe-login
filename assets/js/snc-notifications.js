@@ -26,22 +26,66 @@
   const CLOSE_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m18 6-12 12M6 6l12 12"/></svg>';
 
   const scriptSrc = document.currentScript ? document.currentScript.src : '';
-  const SOUND_URL = scriptSrc
+  const NOTICE_SOUND_URL = scriptSrc
     ? new URL('../sounds/notice_notif.wav', scriptSrc).href
     : 'assets/sounds/notice_notif.wav';
+  const SUCCESS_SOUND_URL = scriptSrc
+    ? new URL('../sounds/new_notif.wav', scriptSrc).href
+    : 'assets/sounds/new_notif.wav';
 
   let region = null;
   let toastSeq = 0;
-  let notifAudio = null;
+  const audioCache = {};
+  let alertAudioCtx = null;
 
-  function playSound() {
+  function playAlertTone(type) {
     try {
-      if (!notifAudio) {
-        notifAudio = new Audio(SOUND_URL);
-        notifAudio.preload = 'auto';
+      const Ctx = window.AudioContext || window.webkitAudioContext;
+      if (!Ctx) return;
+      if (!alertAudioCtx) alertAudioCtx = new Ctx();
+      if (alertAudioCtx.state === 'suspended') alertAudioCtx.resume();
+
+      const now = alertAudioCtx.currentTime;
+      const osc = alertAudioCtx.createOscillator();
+      const gain = alertAudioCtx.createGain();
+
+      osc.type = 'triangle';
+      if (type === 'error') {
+        osc.frequency.setValueAtTime(360, now);
+        osc.frequency.setValueAtTime(250, now + 0.09);
+      } else {
+        osc.frequency.setValueAtTime(520, now);
+        osc.frequency.setValueAtTime(390, now + 0.09);
       }
-      notifAudio.currentTime = 0;
-      const playPromise = notifAudio.play();
+
+      gain.gain.setValueAtTime(0.32, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+
+      osc.connect(gain);
+      gain.connect(alertAudioCtx.destination);
+      osc.start(now);
+      osc.stop(now + 0.26);
+    } catch (e) {
+      // Ignore audio errors.
+    }
+  }
+
+  function playSound(type) {
+    if (type === 'warning' || type === 'error') {
+      playAlertTone(type);
+      return;
+    }
+
+    const url = type === 'success' ? SUCCESS_SOUND_URL : NOTICE_SOUND_URL;
+    try {
+      if (!audioCache[url]) {
+        const audio = new Audio(url);
+        audio.preload = 'auto';
+        audioCache[url] = audio;
+      }
+      const clip = audioCache[url];
+      clip.currentTime = 0;
+      const playPromise = clip.play();
       if (playPromise && typeof playPromise.catch === 'function') {
         playPromise.catch(() => {
           // Ignore browser autoplay block when no prior user gesture exists.
@@ -145,7 +189,7 @@
     trimOverflow(container);
 
     if (opts.sound !== false) {
-      playSound();
+      playSound(type);
     }
 
     window.requestAnimationFrame(() => {
