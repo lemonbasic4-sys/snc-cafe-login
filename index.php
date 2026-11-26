@@ -63,7 +63,7 @@
                 <button class="snc-password-toggle" id="snc-password-toggle" type="button" aria-label="Show password" aria-pressed="false">Show</button>
               </div>
             </div>
-            <button class="snc-submit" type="submit">Sign In</button>
+            <button class="snc-submit" type="submit">Login</button>
             <p class="snc-form-status" id="snc-form-status" role="status" aria-live="polite"></p>
           </form>
           <p class="snc-form-footer">Authorized personnel only</p>
