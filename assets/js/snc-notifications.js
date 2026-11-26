@@ -32,51 +32,22 @@
   const SUCCESS_SOUND_URL = scriptSrc
     ? new URL('../sounds/new_notif.wav', scriptSrc).href
     : 'assets/sounds/new_notif.wav';
+  const ALERT_SOUND_URL = scriptSrc
+    ? new URL('../sounds/alert_notif.wav', scriptSrc).href
+    : 'assets/sounds/alert_notif.wav';
 
   let region = null;
   let toastSeq = 0;
   const audioCache = {};
-  let alertAudioCtx = null;
-
-  function playAlertTone(type) {
-    try {
-      const Ctx = window.AudioContext || window.webkitAudioContext;
-      if (!Ctx) return;
-      if (!alertAudioCtx) alertAudioCtx = new Ctx();
-      if (alertAudioCtx.state === 'suspended') alertAudioCtx.resume();
-
-      const now = alertAudioCtx.currentTime;
-      const osc = alertAudioCtx.createOscillator();
-      const gain = alertAudioCtx.createGain();
-
-      osc.type = 'triangle';
-      if (type === 'error') {
-        osc.frequency.setValueAtTime(360, now);
-        osc.frequency.setValueAtTime(250, now + 0.09);
-      } else {
-        osc.frequency.setValueAtTime(520, now);
-        osc.frequency.setValueAtTime(390, now + 0.09);
-      }
-
-      gain.gain.setValueAtTime(0.32, now);
-      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
-
-      osc.connect(gain);
-      gain.connect(alertAudioCtx.destination);
-      osc.start(now);
-      osc.stop(now + 0.26);
-    } catch (e) {
-      // Ignore audio errors.
-    }
-  }
 
   function playSound(type) {
-    if (type === 'warning' || type === 'error') {
-      playAlertTone(type);
-      return;
+    let url = NOTICE_SOUND_URL;
+    if (type === 'success') {
+      url = SUCCESS_SOUND_URL;
+    } else if (type === 'warning' || type === 'error') {
+      url = ALERT_SOUND_URL;
     }
 
-    const url = type === 'success' ? SUCCESS_SOUND_URL : NOTICE_SOUND_URL;
     try {
       if (!audioCache[url]) {
         const audio = new Audio(url);

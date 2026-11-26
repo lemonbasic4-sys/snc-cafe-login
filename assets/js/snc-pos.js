@@ -19,30 +19,23 @@
   if (!cartList || !totalEl || !changeEl || !submitBtn || !csrfInput) return;
 
   const cart = new Map();
-  let audioCtx = null;
+  const scriptSrc = document.currentScript ? document.currentScript.src : '';
+  const CLICK_SOUND_URL = scriptSrc
+    ? new URL('../sounds/click.wav', scriptSrc).href
+    : '../assets/sounds/click.wav';
+  let clickAudio = null;
 
   function playClickSound() {
     try {
-      const Ctx = window.AudioContext || window.webkitAudioContext;
-      if (!Ctx) return;
-      if (!audioCtx) audioCtx = new Ctx();
-      if (audioCtx.state === 'suspended') audioCtx.resume();
-
-      const now = audioCtx.currentTime;
-      const osc = audioCtx.createOscillator();
-      const gain = audioCtx.createGain();
-
-      osc.type = 'triangle';
-      osc.frequency.setValueAtTime(620, now);
-      osc.frequency.exponentialRampToValueAtTime(220, now + 0.032);
-
-      gain.gain.setValueAtTime(0.30, now);
-      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.04);
-
-      osc.connect(gain);
-      gain.connect(audioCtx.destination);
-      osc.start(now);
-      osc.stop(now + 0.042);
+      if (!clickAudio) {
+        clickAudio = new Audio(CLICK_SOUND_URL);
+        clickAudio.preload = 'auto';
+      }
+      const clip = clickAudio.cloneNode();
+      const playPromise = clip.play();
+      if (playPromise && typeof playPromise.catch === 'function') {
+        playPromise.catch(() => {});
+      }
     } catch (e) {
       // Ignore audio errors if blocked or unsupported.
     }
