@@ -9,4 +9,9 @@ REPLACE INTO `menu_items` (`id`, `name`, `category`, `price`, `is_available`) VA
   (5, 'Truffle Cream Pasta', 'Kitchen', 320.00, 1),
   (6, 'Crispy Chicken Katsu', 'Kitchen', 295.00, 1),
   (7, 'Beef Tapa Rice Bowl', 'Kitchen', 265.00, 1),
-  (8, 'Butter Croissant', 'Pastries', 110.00, 1);
+  (8, 'Butter Croissant', 'Pastries', 110.00, 1),
+  (9, 'Chocolate Chip Cookie', 'Pastries', 80.00, 1),
+  (10, 'Blueberry Muffin', 'Pastries', 95.00, 1),
+  (11, 'Classic Cheesecake', 'Desserts', 150.00, 1),
+  (12, 'Chocolate Lava Cake', 'Desserts', 180.00, 1),
+  (13, 'Tiramisu', 'Desserts', 170.00, 1);
