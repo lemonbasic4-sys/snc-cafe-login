@@ -1,0 +1,84 @@
+/* Owner menu management follows the cashier POS buttons, cards, and table styling. */
+.snc-menu-workspace { gap: 20px; }
+.snc-menu-workspace .snc-dashboard__header { align-items: center; }
+.snc-menu-panel { padding: 18px; }
+.snc-menu-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.snc-menu-button { display: inline-flex; align-items: center; justify-content: center; min-height: 36px; padding: 7px 14px; border: 1px solid var(--snc-color-border); border-radius: 999px; background: var(--snc-color-ivory); color: var(--snc-text-secondary); box-shadow: -3px -3px 6px #fff, 3px 3px 7px #3824191f; font-family: inherit; font-size: 14px; font-weight: 650; line-height: 1.3; text-decoration: none; cursor: pointer; transition: background-color 160ms ease, border-color 160ms ease, box-shadow 160ms ease; }
+.snc-menu-button:hover { background: #fcf8f3; color: var(--snc-text-primary); border-color: #d3bda5; box-shadow: -4px -4px 8px #fff, 4px 4px 9px #38241926; }
+.snc-menu-button:active { box-shadow: inset 2px 2px 5px #38241926, inset -2px -2px 5px #fff; }
+.snc-menu-button--primary { background: var(--snc-color-bistre); color: var(--snc-text-on-dark); border-color: var(--snc-color-bistre); box-shadow: -3px -3px 7px #fff, 4px 4px 9px #38241930, inset 0 1px 0 #ffffff29; }
+.snc-menu-button--primary:hover { background: var(--snc-color-mocha); color: var(--snc-text-on-dark); }
+.snc-menu-button:disabled { opacity: 0.6; cursor: wait; box-shadow: none; }
+.snc-menu-button:focus-visible, .snc-menu-filters input:focus-visible, .snc-menu-filters select:focus-visible, .snc-menu-dialog input:focus-visible, .snc-menu-dialog select:focus-visible { outline: 3px solid var(--snc-color-gold); outline-offset: 2px; }
+.snc-menu-filters { display: flex; flex-wrap: wrap; align-items: end; gap: 10px; padding: 0; }
+.snc-menu-filters label, .snc-menu-dialog label { display: flex; flex-direction: column; gap: 6px; font-size: 14px; font-weight: 650; color: var(--snc-text-secondary); min-width: 0; }
+.snc-menu-filters label:first-child { flex: 1 1 220px; }
+.snc-menu-filters input, .snc-menu-filters select, .snc-menu-dialog input, .snc-menu-dialog select { min-width: 0; width: 100%; height: 38px; padding: 0 11px; border: 1px solid #cdb9a3; border-radius: var(--snc-radius-md); background: var(--snc-color-surface); color: var(--snc-text-primary); font: inherit; font-weight: 400; }
+.snc-menu-filters .snc-menu-button { min-height: 38px; }
+.snc-menu-hint { font-size: 14px; line-height: 1.5; color: var(--snc-text-secondary); }
+.snc-menu-results { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; margin: 18px 0 12px; }
+.snc-menu-results h2, .snc-menu-results h3 { display: flex; align-items: center; gap: 8px; margin: 0; font-size: 16px; color: var(--snc-text-primary); }
+.snc-menu-results > span { font-size: 13px; color: var(--snc-text-secondary); }
+.snc-menu-count { display: inline-block; padding: 2px 8px; border-radius: 999px; background: #efe5d8; color: var(--snc-text-secondary); font-size: 12px; line-height: 1.5; font-weight: 650; font-variant-numeric: tabular-nums; }
+.snc-menu-table { font-size: 14px; }
+.snc-menu-table thead { background: transparent; }
+.snc-menu-table th { font-size: 12px; padding-top: 11px; padding-bottom: 11px; }
+.snc-menu-table td { padding-top: 9px; padding-bottom: 9px; }
+.snc-menu-table td:first-child { font-weight: 600; white-space: normal; min-width: 160px; }
+.snc-menu-table th:nth-child(3), .snc-menu-table td:nth-child(3) { text-align: right; padding-right: 24px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.snc-menu-table th:last-child, .snc-menu-table td:last-child { width: 1%; }
+.snc-menu-table td:last-child > .snc-menu-actions { flex-wrap: nowrap; }
+.snc-menu-table .snc-menu-button { min-height: 32px; padding: 5px 11px; font-size: 13px; white-space: nowrap; }
+.snc-menu-table .snc-menu-actions > .snc-menu-button { background: transparent; box-shadow: none; }
+.snc-menu-table .snc-menu-actions > .snc-menu-button:hover { background: var(--snc-color-ivory); }
+.snc-menu-table tbody tr:hover { background: #fcf9f5; }
+.snc-menu-status { display: inline-block; padding: 3px 9px; border-radius: 999px; background: #eee6dd; color: var(--snc-text-secondary); font-size: 12px; font-weight: 700; }
+.snc-menu-status.is-available { background: #e6efe7; color: var(--snc-status-success); }
+.snc-menu-error { display: block; color: var(--snc-status-danger); font-size: 14px; line-height: 1.4; }
+.snc-menu-error:empty { display: none; }
+.snc-menu-pagination { display: flex; justify-content: flex-end; gap: 8px; margin-top: 16px; }
+.snc-menu-pagination:empty { display: none; }
+.snc-menu-note { padding-top: 12px; margin: 14px 0 0; border-top: 1px solid var(--snc-color-border); font-size: 13px; }
+.snc-menu-dialog { width: min(540px, calc(100% - 32px)); max-height: calc(100dvh - 32px); overflow-y: auto; padding: 22px; border: 1px solid var(--snc-color-border); border-radius: var(--snc-radius-lg); background: var(--snc-color-surface); color: var(--snc-text-primary); box-shadow: 0 16px 48px #2f20172b; }
+.snc-menu-dialog::backdrop { background: #2f201799; }
+.snc-menu-dialog__head { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; margin-bottom: 18px; padding-bottom: 16px; border-bottom: 1px solid var(--snc-color-border); }
+.snc-menu-dialog__head h2 { margin: 0; font: 700 18px/1.3 Inter, system-ui, -apple-system, "Segoe UI", sans-serif; }
+.snc-menu-dialog__head .snc-menu-hint { margin: 6px 0 0; font-size: 13px; }
+.snc-menu-dialog__head > .snc-menu-button { flex-shrink: 0; min-height: 32px; padding: 5px 10px; font-size: 13px; }
+.snc-item-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 16px 12px; }
+.snc-item-fields__wide { grid-column: 1 / -1; }
+.snc-menu-dialog form > .snc-menu-actions { justify-content: flex-end; margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--snc-color-border); }
+.snc-category-row { display: flex; align-items: end; flex-wrap: wrap; gap: 10px; border-bottom: 1px solid #ece1d4; padding: 12px 0; }
+.snc-category-row label { flex: 1 1 200px; }
+.snc-category-row > .snc-menu-button { min-height: 38px; }
+.snc-category-row .snc-menu-error { flex-basis: 100%; }
+.snc-category-row--new { background: #fbf7f1; border: 1px solid #ece1d4; border-radius: var(--snc-radius-md); padding: 12px; }
+.snc-category-dialog[open] { display: flex; flex-direction: column; overflow: hidden; }
+.snc-category-dialog > :not(.snc-category-list) { flex-shrink: 0; }
+.snc-category-dialog { --snc-category-action-width: 132px; }
+.snc-category-row--new > .snc-menu-button { width: var(--snc-category-action-width); }
+.snc-category-list { min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: 0 12px; }
+.snc-category-columns, .snc-category-row--existing { display: grid; grid-template-columns: minmax(0, 1fr) 48px var(--snc-category-action-width); align-items: center; gap: 10px; }
+.snc-category-columns { position: sticky; top: 0; z-index: 1; background: var(--snc-color-surface); padding: 8px 0; border-bottom: 1px solid var(--snc-color-border); font-size: 13px; font-weight: 650; color: var(--snc-text-secondary); }
+.snc-category-columns > :not(:first-child) { text-align: center; }
+.snc-category-row--existing { padding: 9px 0; }
+.snc-category-row--existing > .snc-menu-count { justify-self: center; }
+.snc-category-row--existing > .snc-menu-error { grid-column: 1 / -1; }
+.snc-category-row--existing:last-child { border-bottom: 0; }
+.snc-category-dialog .snc-menu-note { margin-top: 12px; }
+.snc-category-feedback { margin: 10px 0 0; color: var(--snc-status-success); font-size: 14px; line-height: 1.4; }
+.snc-category-feedback:empty { display: none; }
+@media (max-width: 700px) {
+  .snc-menu-panel { padding: 12px; }
+  .snc-menu-filters > label:not(:first-child) { flex: 1 1 150px; }
+  .snc-menu-dialog { padding: 16px; }
+  .snc-item-fields { grid-template-columns: 1fr; }
+}
+@media (max-width: 440px) {
+  .snc-category-dialog { --snc-category-action-width: 104px; }
+  .snc-category-columns, .snc-category-row--existing { grid-template-columns: minmax(0, 1fr) 34px var(--snc-category-action-width); gap: 6px; }
+  .snc-category-row--new { display: grid; grid-template-columns: minmax(0, 1fr) var(--snc-category-action-width); }
+  .snc-category-row--new .snc-menu-error { grid-column: 1 / -1; }
+  .snc-category-dialog .snc-menu-button { font-size: 13px; padding-left: 8px; padding-right: 8px; }
+}
+@media (prefers-reduced-motion: reduce) { .snc-menu-button { transition: none; } }

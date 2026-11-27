@@ -1,0 +1,21 @@
+.snc-inbox-link { display: inline-flex; align-items: center; gap: 7px; padding: 7px 11px; border: 1px solid var(--snc-color-border); border-radius: var(--snc-radius-md); color: var(--snc-text-primary); background: var(--snc-color-surface); text-decoration: none; font-size: 13px; font-weight: 600; white-space: nowrap; }
+.snc-inbox-link svg { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.snc-pos-bar .snc-inbox-link { color: var(--snc-text-on-dark); background: transparent; border-color: #d8b88a55; }
+.snc-inbox-count { display: inline-flex; justify-content: center; align-items: center; min-width: 20px; padding: 2px 6px; border-radius: 999px; background: var(--snc-color-gold); color: var(--snc-text-primary); font-size: 11px; font-weight: 750; }
+.snc-inbox-count[hidden] { display: none; }
+.snc-nav-link .snc-inbox-count { margin-left: auto; }
+.snc-inbox-page { max-width: 1100px; width: 100%; }
+.snc-inbox-page h1 { font-size: 24px; margin: 0; }
+.snc-inbox-page a { text-decoration: none; }
+.snc-inbox-toolbar,.snc-inbox-toolbar nav,.snc-inbox-item__head,.snc-inbox-item__actions,.snc-inbox-pagination { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; }
+.snc-inbox-toolbar { justify-content: space-between; padding: 12px 0 20px; }
+.snc-inbox-item { padding: 20px; margin-bottom: 12px; border: 1px solid var(--snc-color-border); border-radius: var(--snc-radius-md); }
+.snc-inbox-item.is-unread { border-left: 4px solid var(--snc-color-gold); background: #fcf8f2; }
+.snc-inbox-item__head { justify-content: space-between; }
+.snc-inbox-item h2 { margin: 0; font-size: 16px; }
+.snc-inbox-item p { font-size: 14px; line-height: 1.6; overflow-wrap: anywhere; }
+.snc-inbox-item time { font-size: 12px; }
+.snc-inbox-item__actions { margin-top: 14px; }
+.snc-inbox-pagination { justify-content: flex-end; margin-top: 20px; font-size: 13px; }
+.snc-inbox-empty { padding: 24px 0; color: var(--snc-text-secondary); }
+@media(max-width:700px){ .snc-inbox-link > span:not(.snc-inbox-count) { display: none; } .snc-inbox-item { padding: 14px; } .snc-topbar__crumb { white-space: normal; font-size: 11px; } }

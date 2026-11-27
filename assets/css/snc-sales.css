@@ -1,0 +1,39 @@
+/* Owner reporting follows SNC cards, cashier controls, and compact tables. */
+.snc-sales-filters { gap: 20px; padding: 20px; }
+.snc-sales-filters .snc-menu-filters { display: grid; grid-template-columns: minmax(240px, 2fr) repeat(4, minmax(155px, 1fr)); gap: 16px; }
+.snc-sales-filters .snc-menu-filters label { gap: 8px; }
+.snc-sales-filters .snc-menu-filters input, .snc-sales-filters .snc-menu-filters select { height: 40px; }
+.snc-sales-filters > .snc-menu-actions { margin-bottom: 0; }
+.snc-sales-filters .snc-menu-hint { margin: 0; font-size: 13px; }
+.snc-sales-filters input[type="date"] { min-width: 142px; }
+.snc-sales-filter-actions { grid-column: 1 / -1; justify-content: flex-end; margin-left: 0; padding-top: 2px; }
+.snc-sales-main .snc-kpi-card__label { font-size: 14px; margin: 0; }
+.snc-sales-main .snc-kpi-card__value { font-size: 25px; overflow-wrap: anywhere; }
+.snc-sales-main .snc-kpi-card__meta { line-height: 1.4; }
+.snc-sales-main .snc-menu-results { margin-top: 0; }
+.snc-sales-refresh { display: flex; align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: 10px; }
+.snc-sales-refresh > span { color: var(--snc-text-secondary); font-size: 13px; font-variant-numeric: tabular-nums; }
+.snc-sales-transactions { gap: 10px; }
+.snc-sales-transactions .snc-menu-results { margin: 0; }
+.snc-sales-note { margin: 0; padding-top: 10px; border-top: 1px solid var(--snc-color-border); font-size: 13px; }
+.snc-sales-transactions .snc-menu-pagination { margin-top: 0; }
+.snc-sales-table { font-size: 14px; }
+.snc-sales-table th { font-size: 12px; }
+.snc-sales-table .snc-order-link { font-weight: 500; text-decoration: none; }
+.snc-sales-table .snc-order-link:hover, .snc-sales-table .snc-order-link:focus-visible { text-decoration: underline; }
+.snc-sales-table td.snc-sales-amount, .snc-sales-table th:nth-child(4) { text-align: right; font-variant-numeric: tabular-nums; }
+.snc-sales-table .snc-menu-button { min-height: 32px; padding: 5px 12px; font-size: 13px; }
+.snc-sales-payment { display: block; margin-top: 4px; font-size: 12px; color: var(--snc-text-secondary); }
+.snc-sales-payment[data-payment-status="paid"] { color: var(--snc-status-success); }
+.snc-sales-payment[data-payment-status="voided"] { color: var(--snc-status-danger); }
+@media (max-width: 1400px) {
+  .snc-sales-filters .snc-menu-filters { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .snc-sales-filters .snc-menu-filters > label:first-child { grid-column: 1 / -1; }
+}
+@media (max-width: 760px) {
+  .snc-sales-filters { padding: 16px; }
+  .snc-sales-filters .snc-menu-filters { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 420px) {
+  .snc-sales-filters .snc-menu-filters { grid-template-columns: minmax(0, 1fr); }
+}

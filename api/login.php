@@ -43,7 +43,7 @@ try {
 }
 
 $stmt = $pdo->prepare(
-    'SELECT id, username, full_name, role, password_hash, is_active
+    'SELECT id, username, full_name, role, password_hash, is_active, auth_version
      FROM users
      WHERE username = :username
      LIMIT 1'
@@ -76,6 +76,7 @@ $_SESSION['user'] = [
     'username' => (string) $user['username'],
     'full_name' => (string) $user['full_name'],
     'role' => $role,
+    'auth_version' => (int) $user['auth_version'],
 ];
 
 $updateStmt = $pdo->prepare('UPDATE users SET last_login_at = NOW() WHERE id = :id');

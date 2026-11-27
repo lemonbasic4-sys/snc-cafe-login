@@ -1,0 +1,14 @@
+.snc-operation-counts { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 18px; }
+.snc-operation-counts h2 { margin: 0; }
+.snc-operation-refresh { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; }
+.snc-operation-refresh span { font-size: 12px; color: var(--snc-text-secondary); }
+.snc-operation-table { font-size: 13px; }
+.snc-operation-table td { vertical-align: top; }
+.snc-operation-table th { font-size: 11px; }
+.snc-operation-table .snc-menu-button { white-space: nowrap; font-size: 12px; min-height: 32px; padding: 6px 10px; }
+.snc-operation-items { padding: 0; margin: 0; list-style: none; min-width: 150px; }
+.snc-operation-items li { margin-bottom: 5px; overflow-wrap: anywhere; }
+.snc-operation-table small { font-size: 11px; color: var(--snc-text-secondary); }
+#snc-operations-error:empty { display: none; }
+#snc-operation-filters label { flex: 0 1 230px; }
+@media(max-width:600px){ .snc-operation-counts { gap: 8px; } .snc-operation-counts .snc-kpi-card { padding: 12px; } .snc-operation-counts .snc-kpi-card__value { font-size: 24px; } }

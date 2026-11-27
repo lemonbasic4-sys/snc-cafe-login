@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../includes/auth.php';
+require_once __DIR__ . '/../includes/audit.php';
 
 header('Content-Type: application/json; charset=UTF-8');
 
@@ -53,6 +54,9 @@ $expectedCurrent = $allowedTransitions[$nextStatus];
 
 try {
     $pdo = snc_get_db();
+    $pdo->beginTransaction();
+    $q=$pdo->prepare("SELECT order_number,kitchen_status FROM orders WHERE id=? AND payment_status='paid' FOR UPDATE");$q->execute([$orderId]);$previous=$q->fetch();
+    if(!$previous||$previous['kitchen_status']!==$expectedCurrent){$pdo->rollBack();snc_kitchen_json(409,['ok'=>false,'message'=>'Order status already changed or order not found.']);}
     $completedExpr = $nextStatus === 'completed' ? ', completed_at = NOW()' : '';
     $stmt = $pdo->prepare(
         "UPDATE orders
@@ -66,9 +70,12 @@ try {
     ]);
 
     if ($stmt->rowCount() === 0) {
-        snc_kitchen_json(409, ['ok' => false, 'message' => 'Order status already changed or order not found.']);
+        $pdo->rollBack();snc_kitchen_json(409, ['ok' => false, 'message' => 'Order status already changed or order not found.']);
     }
+    snc_audit_write($pdo,$user,'kitchen','status_changed','order',$orderId,$previous['order_number'],['kitchen_status'=>$expectedCurrent],['kitchen_status'=>$nextStatus]);
+    $pdo->commit();
 } catch (Throwable $e) {
+    if(isset($pdo)&&$pdo->inTransaction())$pdo->rollBack();
     snc_kitchen_json(500, ['ok' => false, 'message' => 'Unable to update order status.']);
 }
 

@@ -1,0 +1,11 @@
+/* Staff controls use the existing owner and cashier design. */
+.snc-staff-stats { grid-template-columns: repeat(3,minmax(0,1fr)); }
+.snc-staff-stats .snc-kpi-card__label { margin: 0; font-size: 14px; }
+.snc-staff-stats .snc-kpi-card__meta { line-height: 1.4; }
+.snc-staff-workspace [hidden] { display: none !important; }
+.snc-staff-username { display: block; margin-top: 5px; font-size: 13px; font-weight: 400; color: var(--snc-text-secondary); }
+.snc-staff-table th:nth-child(3), .snc-staff-table td:nth-child(3) { text-align: left; padding-right: 12px; }
+.snc-staff-workspace .snc-staff-show-password { flex-direction: row; align-items: center; gap: 8px; font-weight: 400; }
+.snc-staff-workspace .snc-staff-show-password input { width: 18px; height: 18px; padding: 0; accent-color: var(--snc-color-bistre); }
+.snc-staff-workspace .snc-menu-dialog small { font-size: 12px; font-weight: 400; line-height: 1.5; }
+@media(max-width:700px) { .snc-staff-stats { grid-template-columns: 1fr; } }

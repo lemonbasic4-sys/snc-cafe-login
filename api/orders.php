@@ -34,7 +34,8 @@ if ($method === 'GET') {
 
     if ($role === 'kitchen') {
         $stmt = $pdo->query(
-            "SELECT id, order_number, order_type, table_or_note, kitchen_status, created_at
+            "SELECT id, order_number, order_type, table_or_note, kitchen_status, created_at,
+                    TIMESTAMPDIFF(SECOND, created_at, NOW()) AS age_seconds
              FROM orders
              WHERE payment_status = 'paid'
                AND kitchen_status IN ('pending', 'preparing', 'ready')
@@ -80,6 +81,8 @@ if ($method === 'GET') {
          LIMIT 15"
     );
     $recent = $recentStmt->fetchAll();
+    require_once __DIR__.'/../includes/system-settings.php';
+    try{$enabledMethods=snc_settings_methods(snc_settings_get($pdo));}catch(Throwable $e){snc_orders_json(503,['ok'=>false,'message'=>'Payment settings are unavailable.']);}
 
     $countsStmt = $pdo->query(
         "SELECT
@@ -99,6 +102,7 @@ if ($method === 'GET') {
             'ready' => (int) ($counts['ready_count'] ?? 0),
         ],
         'orders' => $recent,
+        'payment_methods' => $enabledMethods,
     ]);
 }
 
@@ -118,159 +122,20 @@ if ($method === 'POST') {
         snc_orders_json(400, ['ok' => false, 'message' => 'Invalid request payload.']);
     }
 
-    $itemsInput = $payload['items'] ?? [];
-    if (!is_array($itemsInput) || $itemsInput === []) {
-        snc_orders_json(422, ['ok' => false, 'message' => 'Add at least one menu item to the order.']);
-    }
-
-    $orderType = (string) ($payload['order_type'] ?? 'dine_in');
-    if (!in_array($orderType, ['dine_in', 'takeout'], true)) {
-        snc_orders_json(422, ['ok' => false, 'message' => 'Invalid order type.']);
-    }
-
-    $tableOrNote = trim((string) ($payload['table_or_note'] ?? ''));
-    $tableOrNote = substr($tableOrNote, 0, 80);
-
-    $paymentMethod = (string) ($payload['payment_method'] ?? 'cash');
-    if (!in_array($paymentMethod, ['cash', 'gcash', 'card'], true)) {
-        snc_orders_json(422, ['ok' => false, 'message' => 'Invalid payment method.']);
-    }
-
-    $requestedQty = [];
-    foreach ($itemsInput as $entry) {
-        if (!is_array($entry)) {
-            continue;
-        }
-        $menuId = (int) ($entry['menu_item_id'] ?? 0);
-        $qty = (int) ($entry['quantity'] ?? 0);
-        if ($menuId > 0 && $qty > 0 && $qty <= 99) {
-            $requestedQty[$menuId] = min(99, ($requestedQty[$menuId] ?? 0) + $qty);
-        }
-    }
-
-    if ($requestedQty === []) {
-        snc_orders_json(422, ['ok' => false, 'message' => 'No valid order items provided.']);
-    }
-
-    $menuIds = array_keys($requestedQty);
-    $placeholders = implode(',', array_fill(0, count($menuIds), '?'));
-    $menuStmt = $pdo->prepare(
-        "SELECT id, name, price
-         FROM menu_items
-         WHERE id IN ($placeholders) AND is_available = 1"
-    );
-    $menuStmt->execute($menuIds);
-    $menuRows = $menuStmt->fetchAll();
-
-    if (count($menuRows) !== count($menuIds)) {
-        snc_orders_json(422, ['ok' => false, 'message' => 'One or more selected items are unavailable.']);
-    }
-
-    $subtotalCents = 0;
-    $lineItems = [];
-    foreach ($menuRows as $row) {
-        $id = (int) $row['id'];
-        $qty = $requestedQty[$id];
-        $unitCents = (int) round(((float) $row['price']) * 100);
-        $lineCents = $unitCents * $qty;
-        $subtotalCents += $lineCents;
-        $lineItems[] = [
-            'menu_item_id' => $id,
-            'item_name' => (string) $row['name'],
-            'unit_price' => number_format($unitCents / 100, 2, '.', ''),
-            'quantity' => $qty,
-            'line_total' => number_format($lineCents / 100, 2, '.', ''),
-        ];
-    }
-
-    $totalCents = $subtotalCents;
-    $tenderedCents = $paymentMethod === 'cash'
-        ? (int) round(((float) ($payload['amount_tendered'] ?? 0)) * 100)
-        : $totalCents;
-
-    if ($tenderedCents < $totalCents) {
-        snc_orders_json(422, ['ok' => false, 'message' => 'Amount tendered is less than the order total.']);
-    }
-
-    $changeCents = $tenderedCents - $totalCents;
-    $subtotalStr = number_format($subtotalCents / 100, 2, '.', '');
-    $totalStr = number_format($totalCents / 100, 2, '.', '');
-    $tenderedStr = number_format($tenderedCents / 100, 2, '.', '');
-    $changeStr = number_format($changeCents / 100, 2, '.', '');
-
-    $pdo->beginTransaction();
+    require_once __DIR__ . '/../includes/checkout.php';
     try {
-        $tempOrderNumber = 'TMP-' . bin2hex(random_bytes(6));
-        $orderStmt = $pdo->prepare(
-            "INSERT INTO orders
-               (order_number, cashier_id, order_type, table_or_note, subtotal, discount_amount, total_amount, payment_status, kitchen_status)
-             VALUES
-               (:order_number, :cashier_id, :order_type, :table_or_note, :subtotal, 0.00, :total_amount, 'paid', 'pending')"
-        );
-        $orderStmt->execute([
-            ':order_number' => $tempOrderNumber,
-            ':cashier_id' => (int) $user['id'],
-            ':order_type' => $orderType,
-            ':table_or_note' => $tableOrNote,
-            ':subtotal' => $subtotalStr,
-            ':total_amount' => $totalStr,
-        ]);
-
-        $orderId = (int) $pdo->lastInsertId();
-        $orderNumber = sprintf('SNC-%s-%04d', date('Ymd'), $orderId);
-
-        $numStmt = $pdo->prepare('UPDATE orders SET order_number = :order_number WHERE id = :id');
-        $numStmt->execute([
-            ':order_number' => $orderNumber,
-            ':id' => $orderId,
-        ]);
-
-        $itemInsert = $pdo->prepare(
-            'INSERT INTO order_items (order_id, menu_item_id, item_name, unit_price, quantity, line_total)
-             VALUES (:order_id, :menu_item_id, :item_name, :unit_price, :quantity, :line_total)'
-        );
-        foreach ($lineItems as $item) {
-            $itemInsert->execute([
-                ':order_id' => $orderId,
-                ':menu_item_id' => $item['menu_item_id'],
-                ':item_name' => $item['item_name'],
-                ':unit_price' => $item['unit_price'],
-                ':quantity' => $item['quantity'],
-                ':line_total' => $item['line_total'],
-            ]);
+        $order = snc_checkout_create($pdo, $user, $payload);
+        snc_orders_json(201, ['ok' => true, 'message' => 'Order sent to kitchen.', 'order' => $order]);
+    } catch (InvalidArgumentException $e) {
+        snc_orders_json(422, ['ok' => false, 'message' => $e->getMessage()]);
+    } catch (RuntimeException $e) {
+        if (!($e instanceof PDOException) && in_array($e->getCode(), [403, 409], true)) {
+            snc_orders_json($e->getCode(), ['ok' => false, 'message' => $e->getMessage()]);
         }
-
-        $payStmt = $pdo->prepare(
-            'INSERT INTO payments (order_id, method, amount_tendered, change_amount, cashier_id)
-             VALUES (:order_id, :method, :amount_tendered, :change_amount, :cashier_id)'
-        );
-        $payStmt->execute([
-            ':order_id' => $orderId,
-            ':method' => $paymentMethod,
-            ':amount_tendered' => $tenderedStr,
-            ':change_amount' => $changeStr,
-            ':cashier_id' => (int) $user['id'],
-        ]);
-
-        $pdo->commit();
+        snc_orders_json(500, ['ok' => false, 'message' => 'Unable to confirm this order. Retry the same checkout to check its result.']);
     } catch (Throwable $e) {
-        if ($pdo->inTransaction()) {
-            $pdo->rollBack();
-        }
-        snc_orders_json(500, ['ok' => false, 'message' => 'Failed to save order.']);
+        snc_orders_json(500, ['ok' => false, 'message' => 'Unable to confirm this order. Retry the same checkout to check its result.']);
     }
-
-    snc_orders_json(201, [
-        'ok' => true,
-        'message' => 'Order sent to kitchen.',
-        'order' => [
-            'id' => $orderId,
-            'order_number' => $orderNumber,
-            'total_amount' => $totalStr,
-            'change_amount' => $changeStr,
-            'payment_method' => $paymentMethod,
-        ],
-    ]);
 }
 
 snc_orders_json(405, ['ok' => false, 'message' => 'Method not allowed.']);

@@ -1,0 +1,35 @@
+.snc-report-filters { gap: 20px; }
+.snc-report-filters .snc-menu-filters { gap: 16px; }
+.snc-report-filters .snc-menu-filters label { flex: 0 1 240px; }
+.snc-report-filters .snc-menu-hint { margin: 0; }
+.snc-report-period { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px; font-size: 13px; color: var(--snc-text-secondary); }
+.snc-analytics-main .snc-kpi-card__value { font-size: 26px; overflow-wrap: anywhere; }
+.snc-analytics-main .snc-kpi-card__label { margin: 0; }
+.snc-report-breakdowns { display: grid; grid-template-columns: 1.2fr 1fr; gap: 20px; }
+.snc-report-breakdowns .snc-card { min-width: 0; }
+.snc-report-breakdowns th:not(:first-child), .snc-report-breakdowns td:not(:first-child) { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.snc-report-breakdowns td:first-child { overflow-wrap: anywhere; }
+.snc-report-rules { font-size: 13px; color: var(--snc-text-secondary); line-height: 1.6; margin: 0; }
+.snc-report-products-print { display: none; }
+@media(max-width:1100px){ .snc-report-breakdowns { grid-template-columns: 1fr; } }
+@media print {
+ @page { margin: 14mm; }
+ html,body { background: white !important; color: black !important; }
+ .snc-sidebar,.snc-sidebar-backdrop,.snc-topbar,.snc-report-controls,.snc-report-filters,.snc-toast-region,.snc-report-products-screen { display: none !important; }
+ .snc-shell,.snc-workspace,.snc-analytics-main,.snc-report-breakdowns { display: block !important; min-height: 0; width: 100%; }
+ .snc-analytics-main { padding: 0; }
+ .snc-card,.snc-kpi-card { box-shadow: none; background: white; border-color: #ccc; margin: 0 0 14px; padding: 12px; }
+ .snc-kpi-grid { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 10px; margin: 16px 0; }
+ .snc-kpi-card { break-inside: avoid; }
+ .snc-analytics-main .snc-kpi-card__value { font-size: 18px; }
+ .snc-table-wrap { overflow: visible; }
+ .snc-dashboard-chart-data .snc-table-wrap { max-height: none; overflow: visible; }
+ .snc-report-products-print { display: block; }
+ .snc-report-products-print h3 { font-size: 14px; }
+ .snc-table { font-size: 11px; width: 100%; }
+ .snc-table tr { break-inside: avoid; }
+ .snc-table thead { display: table-header-group; }
+ .snc-report-period { margin-bottom: 14px; }
+ .snc-dashboard-chart-data summary { display: none; }
+ a { text-decoration: none; color: inherit; }
+}

@@ -15,10 +15,10 @@ $flash = snc_pop_flash();
   <title>Kitchen Orders | SNC 2018 Café &amp; Resto</title>
   <link rel="icon" type="image/svg+xml" href="../assets/images/snc-dreamcatcher-emblem.svg">
   <link rel="stylesheet" href="../assets/css/snc-tokens.css?v=1.0">
-  <link rel="stylesheet" href="../assets/css/snc-kitchen.css?v=1.0">
+  <link rel="stylesheet" href="../assets/css/snc-kitchen.css?v=1.3">
   <link rel="stylesheet" href="../assets/css/snc-notifications.css?v=1.0">
   <script src="../assets/js/snc-notifications.js?v=1.0" defer></script>
-  <script src="../assets/js/snc-kitchen.js?v=1.0" defer></script>
+  <script src="../assets/js/snc-kitchen.js?v=1.3" defer></script>
 </head>
 <body<?= $flash ? ' data-snc-flash="' . htmlspecialchars((string) json_encode($flash), ENT_QUOTES, 'UTF-8') . '"' : '' ?>>
   <header class="snc-kitchen-bar">
@@ -43,12 +43,15 @@ $flash = snc_pop_flash();
 
     <div class="snc-kitchen-toolbar">
       <div class="snc-kitchen-tabs" role="group" aria-label="Filter kitchen tickets">
-        <button class="snc-kitchen-tab is-active" type="button" data-status="all">All Active</button>
-        <button class="snc-kitchen-tab" type="button" data-status="pending">Pending</button>
-        <button class="snc-kitchen-tab" type="button" data-status="preparing">Preparing</button>
-        <button class="snc-kitchen-tab" type="button" data-status="ready">Ready</button>
+        <button class="snc-kitchen-tab is-active" type="button" data-status="all" aria-pressed="true">All Active <span class="snc-kitchen-count">(—)</span></button>
+        <button class="snc-kitchen-tab" type="button" data-status="pending" aria-pressed="false">Pending <span class="snc-kitchen-count">(—)</span></button>
+        <button class="snc-kitchen-tab" type="button" data-status="preparing" aria-pressed="false">Preparing <span class="snc-kitchen-count">(—)</span></button>
+        <button class="snc-kitchen-tab" type="button" data-status="ready" aria-pressed="false">Ready <span class="snc-kitchen-count">(—)</span></button>
       </div>
-      <button class="snc-kitchen-refresh" id="snc-kitchen-refresh" type="button">Refresh Queue</button>
+      <div class="snc-kitchen-updates">
+        <span class="snc-kitchen-update-status" id="snc-kitchen-update-status" role="status">Loading queue…</span>
+        <button class="snc-kitchen-refresh" id="snc-kitchen-refresh" type="button">Refresh</button>
+      </div>
     </div>
 
     <section class="snc-ticket-grid" id="snc-ticket-grid" aria-label="Active kitchen tickets">

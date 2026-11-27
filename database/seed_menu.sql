@@ -15,3 +15,6 @@ REPLACE INTO `menu_items` (`id`, `name`, `category`, `price`, `is_available`) VA
   (11, 'Classic Cheesecake', 'Desserts', 150.00, 1),
   (12, 'Chocolate Lava Cake', 'Desserts', 180.00, 1),
   (13, 'Tiramisu', 'Desserts', 170.00, 1);
+
+INSERT IGNORE INTO menu_categories (name)
+SELECT DISTINCT category FROM menu_items WHERE TRIM(category) <> '';

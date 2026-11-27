@@ -1,0 +1,53 @@
+/* SNC receipt: branded screen preview; monochrome thermal output.
+   The printer driver supplies the roll size and continuous-paper page length. */
+.snc-receipt-page { --snc-receipt-width: 80mm; }
+.snc-receipt-page--58 { --snc-receipt-width: 58mm; }
+.snc-receipt-workspace { max-width: 900px; margin: 0 auto; padding: var(--snc-spacing-lg) var(--snc-spacing-md); }
+.snc-receipt-controls h1 { margin: 0; font: 700 24px Georgia, serif; }
+.snc-receipt-controls > p { font-size: 14px; line-height: 1.5; color: var(--snc-text-secondary); }
+.snc-receipt-controls > p:last-child { margin: 8px 0 0; }
+.snc-receipt-controls .snc-pos-head { margin-bottom: 8px; }
+.snc-receipt-actions { display: flex; align-items: end; flex-wrap: wrap; gap: var(--snc-spacing-md); }
+.snc-receipt-actions button { padding: 0 20px; }
+.snc-receipt {
+  width: var(--snc-receipt-width);
+  max-width: 100%;
+  margin: var(--snc-spacing-md) auto 0;
+  padding: 4mm;
+  background: white;
+  color: black;
+  box-shadow: var(--snc-shadow-card);
+  font: 12px/1.45 Arial, sans-serif;
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+.snc-receipt-brand { text-align: center; }
+.snc-receipt-brand img { filter: grayscale(1) brightness(0); }
+.snc-receipt-brand h2 { margin: 4px 0; font: 700 22px Georgia, serif; }
+.snc-receipt-brand p { margin: 3px 0; }
+.snc-receipt-meta { margin: 8px 0; }
+.snc-receipt-meta > div { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; margin: 4px 0; }
+.snc-receipt-meta dt { flex: 0 1 45%; }
+.snc-receipt-meta dd { margin: 0; text-align: right; flex: 0 1 60%; min-width: 0; }
+.snc-receipt-meta > .snc-receipt-meta__full { display: block; margin: 6px 0; }
+.snc-receipt-meta__full dt { font-weight: 700; }
+.snc-receipt-meta__full dd { text-align: left; }
+.snc-receipt-items { width: 100%; border-collapse: collapse; table-layout: fixed; border-top: 1px dashed black; border-bottom: 1px dashed black; }
+.snc-receipt-items th { font-weight: 700; text-align: left; border-bottom: 1px dashed black; }
+.snc-receipt-items th, .snc-receipt-items td { padding: 5px 0; vertical-align: top; }
+.snc-receipt-items th:last-child, .snc-receipt-items td:last-child { width: 33%; text-align: right; padding-left: 5px; }
+.snc-receipt-items td span { display: block; margin-top: 2px; }
+.snc-receipt-total { font-size: 16px; font-weight: 700; padding: 5px 0; }
+.snc-receipt-footer { text-align: center; border-top: 1px dashed black; padding-top: 8px; }
+.snc-receipt-footer p { margin: 0 0 8px; }
+.snc-receipt-footer p:last-child { margin-bottom: 0; }
+@page { size: auto; margin: 0; }
+@media print {
+  html, body.snc-receipt-page { margin: 0; padding: 0; background: white; color: black; min-height: 0; }
+  .snc-receipt-controls { display: none !important; }
+  .snc-receipt-workspace { margin: 0; padding: 0; max-width: none; }
+  .snc-receipt { margin: 0; box-shadow: none; max-width: 100%; }
+  .snc-receipt-brand, .snc-receipt-items tr, .snc-receipt-totals, .snc-receipt-footer { break-inside: avoid; }
+}
+
+.snc-receipt-profile { white-space: pre-line; }

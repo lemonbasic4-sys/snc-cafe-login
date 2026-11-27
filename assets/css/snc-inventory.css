@@ -1,0 +1,29 @@
+/* SNC inventory follows owner navigation and cashier-style controls. */
+.snc-inventory-stats { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.snc-inventory-stats .snc-kpi-card__label { margin: 0; font-size: 14px; }
+.snc-inventory-stats .snc-kpi-card__meta { line-height: 1.4; }
+.snc-inventory-table { font-size: 14px; }
+.snc-inventory-table th { font-size: 12px; }
+.snc-inventory-table td:first-child { font-weight: 600; }
+.snc-inventory-table td.snc-inventory-number { text-align: right; font-variant-numeric: tabular-nums; }
+.snc-inventory-table th:nth-child(3), .snc-inventory-table th:nth-child(4) { text-align: right; }
+.snc-inventory-table .snc-menu-button { min-height: 32px; padding: 5px 11px; font-size: 13px; white-space: nowrap; }
+.snc-inventory-status { display: inline-block; padding: 3px 9px; border-radius: 999px; font-size: 12px; font-weight: 700; background: #eee6dd; color: var(--snc-text-secondary); }
+.snc-inventory-status[data-stock-status="healthy"] { background: #e6efe7; color: var(--snc-status-success); }
+.snc-inventory-status[data-stock-status="low"] { background: #f6e8cf; color: #795018; }
+.snc-inventory-status[data-stock-status="out"] { background: #f7e5e1; color: var(--snc-status-danger); }
+.snc-inventory-main [hidden] { display: none !important; }
+.snc-inventory-main .snc-menu-dialog input:disabled, .snc-inventory-main .snc-menu-dialog select:disabled { background: var(--snc-color-ivory); }
+.snc-inventory-main .snc-menu-dialog .snc-menu-error { margin: 12px 0; }
+.snc-inventory-table td.snc-inventory-reason { white-space: normal; min-width: 200px; max-width: 320px; overflow-wrap: anywhere; }
+.snc-inventory-history [data-direction="out"] { color: var(--snc-status-danger); }
+.snc-inventory-history [data-direction="in"] { color: var(--snc-status-success); }
+.snc-inventory-history th:nth-child(3) { text-align: left; }
+.snc-inventory-history td:first-child { font-weight: 400; }
+.snc-inventory-history th:nth-child(5), .snc-inventory-history th:nth-child(6) { text-align: right; }
+.snc-stock-preview { display: grid; gap: 8px; margin: 18px 0; padding: 16px; border: 1px solid var(--snc-border-color, #e4d2bf); border-radius: 10px; background: var(--snc-color-ivory); }
+.snc-stock-preview > span { font-size: 13px; color: var(--snc-text-secondary); }
+.snc-stock-preview strong { font-size: 16px; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.snc-stock-preview small { line-height: 1.5; color: var(--snc-text-secondary); }
+.snc-stock-preview[data-invalid="true"] strong { color: var(--snc-status-danger); }
+@media (max-width: 700px) { .snc-inventory-stats { grid-template-columns: 1fr; } }

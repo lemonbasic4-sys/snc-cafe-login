@@ -126,6 +126,8 @@ button:focus-visible {
   color: var(--snc-text-on-dark);
 }
 
+.snc-kitchen-count { display: inline-block; min-width: 3ch; font-variant-numeric: tabular-nums; }
+
 .snc-kitchen-refresh {
   height: 34px;
   padding: 0 14px;
@@ -140,6 +142,12 @@ button:focus-visible {
 .snc-kitchen-refresh:hover {
   background: #f1e6d8;
 }
+
+.snc-kitchen-updates { display: flex; align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: 10px; }
+.snc-kitchen-update-status { color: var(--snc-text-secondary); font-size: 12px; line-height: 1.4; font-variant-numeric: tabular-nums; }
+.snc-kitchen-update-status[data-unavailable="true"] { color: var(--snc-status-danger); }
+.snc-kitchen-refresh { min-width: 90px; }
+.snc-kitchen-refresh:disabled { cursor: wait; opacity: 0.65; }
 
 .snc-ticket-grid {
   display: grid;
@@ -156,7 +164,7 @@ button:focus-visible {
   box-shadow: var(--snc-shadow-card);
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: flex-start;
   gap: 12px;
 }
 
@@ -169,6 +177,7 @@ button:focus-visible {
 }
 
 .snc-ticket__head {
+  min-height: 44px;
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
@@ -197,6 +206,16 @@ button:focus-visible {
   background: #efe3d3;
   color: var(--snc-text-primary);
   white-space: nowrap;
+}
+
+.snc-ticket__age {
+  display: block;
+  min-height: 2.8em;
+  margin-top: -6px;
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--snc-text-secondary);
+  font-variant-numeric: tabular-nums;
 }
 
 .snc-ticket--preparing .snc-ticket__badge {
@@ -229,12 +248,26 @@ button:focus-visible {
 }
 
 .snc-ticket__qty {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  min-width: 34px;
+  min-height: 24px;
+  padding: 2px 6px;
+  border-radius: var(--snc-radius-sm);
   font-weight: 750;
   color: var(--snc-color-bistre);
   font-variant-numeric: tabular-nums;
 }
 
+.snc-ticket__qty--multiple {
+  background: var(--snc-color-bistre);
+  color: var(--snc-text-on-dark);
+}
+
 .snc-ticket__btn {
+  margin-top: auto;
   height: 38px;
   border: 0;
   border-radius: var(--snc-radius-md);

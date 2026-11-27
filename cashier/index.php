@@ -8,10 +8,13 @@ $user = snc_require_auth(['cashier']);
 $csrfToken = snc_csrf_token();
 $flash = snc_pop_flash();
 
+$paymentMethods=[];
 $menuItems = [];
 $categories = [];
 try {
     $pdo = snc_get_db();
+    require_once __DIR__.'/../includes/system-settings.php';
+    $paymentMethods=snc_settings_methods(snc_settings_get($pdo));
     $stmt = $pdo->query(
         'SELECT id, name, category, price
          FROM menu_items
@@ -37,10 +40,12 @@ try {
   <title>Cashier POS | SNC 2018 Café &amp; Resto</title>
   <link rel="icon" type="image/svg+xml" href="../assets/images/snc-dreamcatcher-emblem.svg">
   <link rel="stylesheet" href="../assets/css/snc-tokens.css?v=1.0">
-  <link rel="stylesheet" href="../assets/css/snc-pos.css?v=1.0">
+  <link rel="stylesheet" href="../assets/css/snc-pos.css?v=2.5">
   <link rel="stylesheet" href="../assets/css/snc-notifications.css?v=1.0">
   <script src="../assets/js/snc-notifications.js?v=1.0" defer></script>
-  <script src="../assets/js/snc-pos.js?v=1.0" defer></script>
+  <script src="../assets/js/snc-pos.js?v=2.4" defer></script>
+  <script src="../assets/js/snc-void-request.js?v=1.1" defer></script>
+  <script src="../assets/js/snc-order-details.js?v=1.5" defer></script>
 </head>
 <body<?= $flash ? ' data-snc-flash="' . htmlspecialchars((string) json_encode($flash), ENT_QUOTES, 'UTF-8') . '"' : '' ?>>
   <header class="snc-pos-bar">
@@ -52,6 +57,7 @@ try {
       </div>
     </div>
     <div class="snc-pos-bar__actions">
+      <?php require_once __DIR__.'/../includes/notification-link.php';snc_notification_link('cashier'); ?>
       <span class="snc-pos-bar__user"><?= htmlspecialchars((string) $user['full_name'], ENT_QUOTES, 'UTF-8') ?></span>
       <form action="../logout.php" method="post">
         <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken, ENT_QUOTES, 'UTF-8') ?>">
@@ -62,6 +68,10 @@ try {
 
   <main class="snc-pos-layout">
     <div class="snc-pos-main">
+      <section class="snc-pos-card snc-payment-saved" id="snc-payment-saved" aria-label="Payment saved" aria-live="polite" hidden>
+        <div><h2>Payment saved</h2><p id="snc-payment-saved-detail"></p></div>
+        <a class="snc-cat-btn snc-receipt-link" id="snc-last-receipt" target="_blank" rel="noopener">Print Receipt</a>
+      </section>
       <section class="snc-pos-card" aria-label="Menu items">
         <div class="snc-pos-head">
           <h2>Menu</h2>
@@ -98,23 +108,30 @@ try {
       </section>
 
       <section class="snc-pos-card" aria-label="Recent orders">
-        <div class="snc-pos-head">
+        <div class="snc-pos-head snc-orders-head">
           <h2>Recent Orders</h2>
+          <div class="snc-orders-head-actions">
+            <a class="snc-cat-btn snc-receipt-link" href="history.php" target="_blank" rel="noopener">View History</a>
+            <span class="snc-orders-refresh" id="snc-recent-orders-status" role="status">Loading updates…</span>
+          </div>
         </div>
+        <div class="snc-orders-scroll" role="region" aria-label="Recent orders table" tabindex="0">
         <table class="snc-orders-table">
           <thead>
             <tr>
-              <th>Order #</th>
-              <th>Type</th>
+              <th>Order / Time</th>
+              <th>Type / Customer</th>
               <th>Total</th>
               <th>Payment</th>
               <th>Kitchen</th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody id="snc-recent-orders-body">
-            <tr><td colspan="5">Loading recent orders...</td></tr>
+            <tr><td colspan="6">Loading recent orders...</td></tr>
           </tbody>
         </table>
+        </div>
       </section>
     </div>
 
@@ -156,19 +173,25 @@ try {
         <div class="snc-field">
           <label for="snc-pay-method">Payment</label>
           <select class="snc-input" id="snc-pay-method">
-            <option value="cash">Cash</option>
-            <option value="gcash">GCash</option>
-            <option value="card">Card</option>
+            <?php foreach($paymentMethods as $value=>$label): ?><option value="<?= $value ?>"><?= $label ?></option><?php endforeach; ?>
+            <?php if(!$paymentMethods): ?><option value="">Payments unavailable</option><?php endif; ?>
           </select>
         </div>
         <div class="snc-field">
           <label for="snc-amount-tendered">Amount Tendered</label>
           <input class="snc-input" id="snc-amount-tendered" type="number" min="0" step="0.01" placeholder="0.00">
+          <div class="snc-cash-shortcuts" role="group" aria-label="Cash amount shortcuts">
+            <button class="snc-cat-btn" type="button" data-cash-amount="exact" disabled>Exact</button>
+            <button class="snc-cat-btn" type="button" data-cash-amount="500" disabled>₱500</button>
+            <button class="snc-cat-btn" type="button" data-cash-amount="1000" disabled>₱1,000</button>
+          </div>
         </div>
       </div>
 
+      <p class="snc-checkout-status" id="snc-checkout-status" role="status" aria-live="polite"></p>
       <button class="snc-pos-submit" id="snc-pos-submit" type="button" disabled>Charge &amp; Send to Kitchen</button>
     </aside>
   </main>
+  <?php require __DIR__ . '/../includes/cashier-order-dialog.php'; ?>
 </body>
 </html>

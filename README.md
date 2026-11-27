@@ -1,5 +1,139 @@
 # SNC 2018 Café & Resto — Management System
 
+### System Settings
+
+Owners open **System Settings** in the sidebar to edit the business name, optional address/contact number, optional receipt header/footer, default 58 mm or 80 mm paper width, and enabled Cash/GCash/Card methods. The side preview updates unsaved text safely without changing any transaction. **Discard Changes** reloads saved values. At least one payment method is required. Saves require an active owner, CSRF and the current edit revision; stale edits are rejected. Actual changes record before/after values in Audit Trail, with a **View Settings History** link. Unchanged saves do not create extra events.
+
+New checkout requests enforce enabled methods inside the checkout transaction. The POS refreshes available methods with its existing recent-order feed and preserves the cart, asking the cashier to review a changed selection. Unconfirmed checkout retries keep their original details; a completed payment can still be retrieved idempotently even if its method is later disabled. Historical payments and reports retain the original method.
+
+New orders snapshot the receipt business details and header/footer in `orders.receipt_profile`, so reprints retain the text saved at checkout. Older orders without a snapshot keep the previous SNC 2018 receipt text. Paper width is the owner's current preview default for both old and new receipts; a cashier may change the width for one preview without changing that saved default. Existing browser-local paper preferences no longer override it. The existing transaction-summary/official-receipt notice remains fixed. These fields configure receipts; they do not rename account identities, order numbers, or application branding.
+
+Existing installations need `database/system-settings.sql` after the audit migration. It adds the singleton settings row, receipt snapshot column and settings audit category; it is applied locally and included in the fresh schema. Run `D:/xampp/php/php.exe tests/system-settings.php` for validation, permissions, revisions, auditing, disabled methods, retry behavior and receipt snapshots. Checkout tests shadow settings with a connection-local temporary table; active business settings are preserved. Stock, void and audit regression checks passed. HTTP checks covered role/CSRF restrictions and receipt rendering; browser checks covered live preview, paper widths, discard and unchanged saves. Disposable QA records were removed.
+
+### Analytics & Reports
+
+Open **Analytics & Reports** in the owner sidebar. The default period is Last 7 Days; shortcuts provide Today and This Month, plus inclusive custom dates up to 366 days. The page shows Paid Sales, Paid Orders, Discounts, Average Paid Order, a daily sales chart with accessible data table, the top ten products ranked by sales or quantity, and Cash/GCash/Card sales with order counts and shares. Missing payment records appear as **Not recorded**, rather than being assigned a method. Empty periods display zero totals and zero-sales days.
+
+The report shares the dashboard's paid-order reporting scope and exact discount allocation. Each order counts once using its earliest recorded payment, or order time when no payment exists, in UTC+08:00. Unpaid/voided orders and tendered cash/change are excluded; kitchen completion is not required. Recorded product names remain unchanged by menu renames. Zero-priced paid products retain their quantities. Summary, daily sales, products, and methods are read inside one report transaction. Product prices do not represent profit or ingredient cost.
+
+**Export CSV** downloads summary, daily sales, all matching products, and payment breakdown for the chosen dates, with PHP currency labels and generated time. Stored product names are protected against spreadsheet formulas. **Print Report** uses the browser print dialog and a print layout that removes navigation/filter controls and includes all products plus the daily data table. **View Transactions** opens the same paid date range. Exports and pages require an active owner; no new database migration is needed.
+
+Run `D:/xampp/php/php.exe tests/analytics-report.php` for date validation, reporting boundaries, discounts and fractional cents, duplicate payment records, unpaid/voided exclusion, zero-price products, missing payment methods, empty periods, dashboard agreement and CSV protection. All test data is rolled back. Authenticated HTTP checks verified page/export permissions, CSV headers/content and date errors; browser checks covered layout, date shortcuts, ranking and print-action preparation. Physical printing was not performed.
+
+### In-App Notifications
+
+Owners receive a notification for each new cashier void request. The requesting cashier receives approval or rejection decisions, including the owner's rejection reason. An owner's direct void also notifies the cashier when it closes a pending request. Delivery is recorded inside the same transaction as the request/decision, with a unique recipient/request/event key to prevent duplicates on retries. Existing requests and decisions are not backfilled.
+
+**Notifications** is available in the owner sidebar/top bar and the cashier header. The inbox has All and Unread views, 20 records per page, individual **Mark as Read**, and **Mark All as Read**. Viewing a request/order marks its notification read and opens the relevant approval or cashier order details. Marking all covers records through the displayed inbox boundary; newer records remain unread. Messages stay in history after reading. Cashier header links open Notifications in another tab so the active POS cart is preserved; no cashier sidebar was added.
+
+Unread badges refresh every 30 seconds while a page is visible and when focus returns. A new notification can show the existing in-app toast. Counts failing to load are labeled unavailable, rather than displayed as zero. This version delivers inside the app; it does not send email, SMS or browser push. Notification records are restricted to their recipient and intended account role; reading requires CSRF-protected POST requests. Links are generated from trusted request/order IDs, not stored external URLs.
+
+Apply `database/in-app-notifications.sql` after the void-request migration on existing installations; it is applied locally and included in the fresh schema. Run `D:/xampp/php/php.exe tests/in-app-notifications.php` for recipient isolation, delivery retries, approval/rejection messages, read state, pagination, role restrictions, and the mark-all boundary. Void-request regression tests and authenticated HTTP/browser checks passed. Temporary QA records and their notifications were removed.
+
+### Void Requests and Approvals
+
+Cashiers open **View Details → Request Void** in the modal footer. A compact form shows the order number, total and reason, with **Back to Details** and **Send Request** controls. Back preserves the draft reason. The order stays paid and active while pending. Submission returns to order details with **Void Request Pending**, without reloading or clearing the current cart. Reopen details or use **Refresh Status** to see a later decision. Cashier history and standalone order details provide the same workflow; the standalone form also works without JavaScript.
+
+Owners open **Approvals** in the existing sidebar. The page starts with Pending requests and provides Approved, Rejected and All Requests views, order/cashier search, counts, and 20 records per page. **Review Request** opens a compact modal over the table with the requester, reason, current kitchen status, order total and a link to full order details. Approve and Reject are grouped in its footer and open separate confirmation steps in the same modal. Closing preserves filters and table position; direct request links also open the modal. Without JavaScript, links and server-rendered forms remain available below the table. **Approve Void** performs the existing void atomically. **Reject Request** requires an owner reason visible to the cashier and leaves the order unchanged. Cashiers may submit a new request after rejection; earlier requests remain in history.
+
+Only one pending request can exist per order. Repeated submissions and decisions do not duplicate records or audit events; changed or conflicting decisions are rejected. If kitchen progress changes during approval, the owner must review the refreshed state before confirming. An owner's direct void action remains available and closes an existing pending request as Approved with an explicit direct-void note. Requests, approvals, rejections and the actual void are recorded in Audit Trail. Neither path processes refunds or returns ingredients.
+
+Existing installations need `database/void-requests.sql` after the order-void and audit migrations; it has been applied locally and is included in the fresh schema. Run `D:/xampp/php/php.exe tests/void-requests.php` for request permissions, duplicate protection, rejection and resubmission, stale kitchen status, approval, sales and stock behavior, audit events, and direct void reconciliation. Authenticated HTTP and browser checks covered the native forms, cashier modal submission, status display and retained cart. Disposable QA records were removed.
+
+### Owner Order Voids
+
+Open **Sales & Transactions → View Details → Void Order**, enter a reason, and choose **Confirm Void**. Only an active owner can void a paid order directly. The confirmation explains that no refund or ingredient return is processed. Cashiers use the request and approval workflow above.
+
+Voiding preserves original items, totals, payments, kitchen progress, and completion time. It records the owner's name, reason, timestamp, and kitchen status at void, with an **Order voided** audit event. The order remains visible in history and the Voided transaction filter, but is excluded from paid sales, dashboard reporting, the active kitchen queue, and receipt printing. Cashiers can read the void details but cannot void orders. Completed paid orders may also be voided; this does not reverse preparation or stock usage.
+
+Concurrent kitchen changes require a fresh confirmation. Repeating the same confirmation returns the original result without another audit event. Checkout retries identify a subsequently voided order instead of treating it as a new paid checkout. The standalone owner details page also supports confirmation without JavaScript.
+
+Existing installations need `database/order-voids.sql` after the audit migration; it has been applied locally and included in the fresh schema. Run `D:/xampp/php/php.exe tests/void-orders.php` for permissions, validation, stale progress, repeat submissions, retained records, sales exclusion, checkout retries, and unchanged ingredient balances. HTTP authentication, CSRF, receipt restrictions, and standalone confirmation were checked using disposable QA orders, then cleaned up.
+
+### Owner Audit Trail
+
+Open **Audit Trail** in the existing owner sidebar for read-only activity across authentication, staff, menu/categories, recipes, ingredients, stock movements, paid checkouts, and kitchen status changes. Search by the recorded user or affected record, filter by inclusive dates, user, or specific activity, and browse 25 records per page. All Time is the default; Reset clears the filters. Times use the application's UTC+08:00 database wall-clock convention.
+
+**View Details** opens recorded before/after values in a modal, retaining the current filters. It falls back to a standalone record section without JavaScript. Order-related records link to owner order details. Failed sign-ins are explicitly labeled **Attempted** and do not identify an authenticated actor. Records preserve recorded names even when accounts or products are later renamed. Passwords, password hashes, and session/request tokens are excluded from audit details.
+
+Existing `auth_audit_logs`, `staff_management_logs`, and `inventory_movements` are read directly into one timeline; they are not copied or duplicated. New menu/category, recipe, ingredient metadata, paid checkout, and kitchen changes write to `audit_events` inside the same transaction as their business change. A rollback removes both. No-op menu/ingredient changes and checkout/stock retries do not create duplicate change entries. Recipe snapshots include ingredient names, units, quantities, and tracking mode. Stock quantities continue to come from the original ledger.
+
+Detailed change recording begins at the timestamp in `audit_recording_info`, shown on the page. Earlier unrecorded menu/recipe/order/kitchen changes are not reconstructed. Existing installations need `database/audit-trail.sql` after the staff, inventory, recipe, and automatic-stock migrations; it has been applied locally and included in the fresh schema. Audit pages and the GET-only detail API require an active owner session. There are no edit/delete controls or mutation endpoints for audit records. Database administrators retain their normal direct database access; this is not a cryptographically tamper-proof ledger.
+
+Run `D:/xampp/php/php.exe tests/audit-trail.php` for rolled-back coverage of filters, pagination, details, source deduplication, redaction, and transaction rollback. Menu/checkout/kitchen HTTP workflows and owner-only permissions were also verified with temporary QA records, then cleaned up. Existing automatic-stock tests clean up only audit records associated with their own disposable fixtures.
+
+### Owner Staff Management
+
+Open **Staff Management** in the existing owner sidebar. It lists Cashier and Kitchen accounts, with name/username search, role/status filters, 25 accounts per page, last sign-in times, and summary counts across all staff. Owner accounts are excluded and cannot be edited, deactivated, or created through this module.
+
+**Add Staff** requires a unique 3–60 character username, staff name, Cashier/Kitchen role, account status, and a matching initial password (at least 8 characters, up to 72 bytes). Passwords are hashed; there is no shared default. Share the chosen initial password directly with the staff member. **Edit** changes names, usernames, roles, and status without replacing passwords. **Activate/Deactivate** presents an account-specific confirmation; there is no delete control. Staff use the Staff Login portal.
+
+Role changes and status changes advance the account's authorization version. Every authenticated request checks the current account, role, active status, and authorization version, so old sessions lose access on their next request. Reactivation requires a fresh login. Name-only edits update displayed identity without revoking sessions. Recorded transactions remain attached to the same user ID. An unavailable account lookup fails closed.
+
+Staff mutations require an active owner and CSRF validation, use transactions and edit revisions to reject stale changes, and record before/after account details in `staff_management_logs`. Passwords and password hashes are never included in those audit records or page data. Existing installations need the additive `database/staff-management.sql` migration; it has been applied locally and is included in the fresh schema. Run `D:/xampp/php/php.exe tests/staff-management.php` for the rolled-back integration checks. Account/session behavior was also checked through the HTTP login and staff endpoints.
+
+### Automatic Ingredient Deduction
+
+Automatic deduction is **opt-in for each menu item**. Open **Menu Management → Manage Recipe**, enter quantities for one item, select **Deduct using recipe** under Stock tracking, and save. Existing recipes and items remain on **Manual tracking** until explicitly enabled. Coffee can be enabled independently of food. A purchased product tracked by pieces can use a recipe of one piece per item.
+
+Only a successfully saved paid checkout deducts stock. Requirements multiply by sold quantities and aggregate shared ingredients across the whole order. The checkout locks stock balances, prevents negative stock, and rejects missing recipes or inactive ingredients for enabled items. Orders, payment records, recipe snapshots, and stock movements commit together or all roll back. Each deduction appears as **Sale Deduction** in Stock History with an order link. Later recipe edits and kitchen status changes do not repeat or rewrite these deductions. Prepared ingredients are not automatically restocked; use an explained manual correction when appropriate.
+
+Checkout requires a unique request key. Concurrent retries return the same order and do not deduct again. If the connection result is unknown, the cashier page keeps the submitted details locked and offers **Retry Checkout** using the same request. Keep that page open until the result is confirmed. A definite validation/stock error unlocks the cart. Refresh old cashier tabs after updating this feature.
+
+Existing installations need `database/automatic-stock.sql` after `database/inventory.sql` and `database/recipes.sql`. It has been applied locally and is included at the end of the fresh schema. The CLI integration check is `D:/xampp/php/php.exe tests/automatic-stock.php`; it uses uniquely named disposable fixtures and removes its own test orders, menu items, and ingredients. Concurrent retry and competing-stock requests were also checked through the HTTP endpoint.
+
+### Menu Recipes
+
+In **Menu Management**, choose **Manage Recipe** beside an item. Enter the ingredients and quantities required for **one menu item**, using each ingredient's fixed base unit (`g`, `ml`, or whole `pcs`). Add/remove rows and save the complete recipe. To clear a recipe, remove all rows and choose **Save Empty Recipe**. Menu items show their recipe ingredient count.
+
+New links require active ingredients. Existing inactive links remain visible with a warning so the owner can replace or reactivate them. Duplicate ingredients, nonpositive quantities, excessive precision, and fractional pieces are rejected. Saves are transactional and use a revision check to reject stale edits from another tab. Recipe pages and saves require the owner role; POST saves require CSRF validation. The editor records the last save time and staff member.
+
+Existing installations need `database/recipes.sql` after `database/inventory.sql`; both migrations have been applied locally. Fresh schema imports include both. Saving recipe configuration does not change existing stock, manual availability, or past orders. Enabled recipes are used by future paid checkouts as described above. Automatic tracking requires a nonempty recipe with active ingredients; switch to Manual tracking before clearing it.
+
+### Owner Inventory
+
+Open **Inventory** in the owner sidebar to create/edit ingredients, set opening stock and low-stock thresholds, activate/deactivate ingredients, and search or filter stock status. Base units are grams (`g`), milliliters (`ml`), or whole pieces (`pcs`). The base unit stays fixed after creation. Editing ingredient details never changes its stock.
+
+**Adjust Stock** supports deliveries, manual usage, waste, and corrections that add or remove stock. Kilogram and liter entries convert to the ingredient's base unit. A live balance preview shows the converted adjustment and resulting stock before saving; the server checks the latest balance again when saving. Quantities support three decimal places; negative balances are rejected. Stock updates and ledger entries save together in a transaction. Request keys prevent duplicate stock changes when a submission is retried.
+
+**Stock History** provides ingredient/date filters and records signed quantities, before/after balances, reasons, staff names, and timestamps. Correct a mistake with another movement; there is no history-delete control. Low Stock means a positive balance at or below the threshold; Out of Stock means zero. Summary counts cover every active ingredient regardless of list filters.
+
+Existing installations need the additive `database/inventory.sql` migration, which has been applied locally. New installations include these tables in `database/schema.sql`. Inventory pages and mutations require an admin account; mutations also require CSRF validation. Recipe-based automatic deduction is available per item. Menu availability remains a separate manual setting.
+
+### Connected Dashboard
+
+The dashboard shows live Paid Sales, Paid Orders, Average Paid Order, Discounts, hourly/daily revenue, and the top five products for **Today**, **This Week** (Monday through today), or **This Month** (through today), using UTC+08:00. **View Transactions** opens the matching date range. Cards and charts share the reporting scope used by Sales & Transactions: earliest recorded payment date (order date if no payment exists), paid orders at any kitchen status, after discounts, excluding unpaid/voided orders and tendered-cash change. Missing hours/days appear as zero. The chart also provides an expandable data table.
+
+Product sales use saved order-item names and prices. Each paid order total is distributed across its item line amounts proportionally; leftover cents use largest remainders so allocated item sales reconcile exactly with the order total. Products are grouped by their saved product ID/name. Owner Attention placeholders are omitted until approval/exception records are implemented. Kitchen queue counts always show the current queue, independent of the selected reporting period.
+
+### Owner Sales & Transactions
+
+Open **Sales & Transactions** in the owner sidebar for all-cashier transaction history, search by order/customer/cashier, date shortcuts and custom ranges, payment method/status filters, and 25 orders per page. Default and Reset show today (UTC+08:00). Dates include the full end day and use the earliest payment timestamp, falling back to order creation when there is no payment record.
+
+**Paid Sales** sums saved `orders.total_amount` only for `payment_status = 'paid'`, regardless of kitchen status. That total already reflects discounts. Unpaid/voided orders and tendered-cash change do not contribute. Discounts and average paid order use the same qualifying orders. Summary cards cover all matching rows, not only the current page. Each order counts once even if multiple payment records exist; the earliest payment supplies the displayed method and date. This version follows the existing single-payment-per-order workflow.
+
+Owners can view original item/payment details in a modal or standalone details page, with a separate confirmation for voiding paid orders. Sales pages require an admin account; the shared detail API allows admin and cashier roles. Cashiers can request a void but cannot directly change payment status. The dashboard uses the same reporting rules.
+
+### Owner Menu Management
+
+Open **Menu Management** from the existing owner sidebar. The page supports item creation/editing, positive prices with up to two decimal places, manual availability, category creation/renaming, search, category/availability filters, and 25 items per page. It has no permanent-delete control. Owner role checks and CSRF validation are enforced by `api/menu.php`.
+
+Existing installations need the additive `database/menu_categories.sql` migration; it has been applied to this local database. New installations can import `database/schema.sql` and then `database/seed_menu.sql`. The migration imports existing category names without replacing menu items. Category renames update menu items transactionally; saved order items and payments are not rewritten.
+
+Refresh an already-open cashier page to display newly edited items, prices, categories, and availability. The order API continues to validate current prices and availability when saving. Automatic stock-based availability remains outside this module.
+
+### Cashier receipt and history usage
+
+**View Details** and cashier order numbers open item and payment details in a modal, preserving the current cart. Paid orders include a **Request Void** action subject to owner approval. Close it with **Close** or Escape. If JavaScript is unavailable, these links open the standalone details page. **View History** opens all recorded orders with order/customer search, inclusive date filters, and 20 orders per page in another tab from the POS. History and details require a cashier session and use the existing design without a sidebar.
+
+For cash payments, **Exact**, **₱500**, and **₱1,000** set the amount tendered (they do not add to it) and recalculate change. Shortcuts are disabled for empty carts and non-cash payments. The server still validates payment before saving.
+
+After payment, use **Print Receipt** in the confirmation or Recent Orders. Receipts open in a separate tab, including for kitchen-completed orders. No cashier sidebar is added.
+
+Choose **58 mm** or **80 mm**, then click **Print Receipt**. Select your installed thermal printer and matching roll size in the print dialog. Use 100% scale, no margins, and disable browser headers and footers. Paper width is remembered in that browser. The printer driver controls continuous-paper length; silent printing and automatic cutting are not implemented.
+
+Receipts use saved item names, prices, and payment amounts and require a cashier session. Printing or cancelling does not modify orders or payments. Check physical output with the actual printer and driver.
+
 **Project:** SNC 2018 Café & Resto Management System  
 **Technology stack:** PHP, HTML5, CSS3, JavaScript, MariaDB/MySQL (planned)  
 **Development environment:** XAMPP  

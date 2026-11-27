@@ -5,6 +5,7 @@
   const ticketGrid = document.getElementById('snc-ticket-grid');
   const filterTabs = document.querySelectorAll('.snc-kitchen-tab');
   const refreshBtn = document.getElementById('snc-kitchen-refresh');
+  const updateStatusEl = document.getElementById('snc-kitchen-update-status');
   const csrfInput = document.getElementById('snc-kitchen-csrf');
 
   if (!ticketGrid || !csrfInput) return;
@@ -14,6 +15,49 @@
   let requestSeq = 0;
   let knownPendingIds = new Set();
   let firstLoad = true;
+  let ordersReceivedAt = Date.now();
+  let lastUpdatedAt = 0;
+  let updatesUnavailable = false;
+
+  function updateRefreshStatus() {
+    if (!updateStatusEl) return;
+    const seconds = Math.floor(Math.max(0, Date.now() - lastUpdatedAt) / 1000);
+    const age = seconds < 10 ? 'just now' : seconds < 60 ? `${seconds}s ago` : `${Math.floor(seconds / 60)} min ago`;
+    const text = updatesUnavailable
+      ? `Updates unavailable · ${lastUpdatedAt ? `Last updated ${age} · ` : ''}Retrying every 10s`
+      : lastUpdatedAt ? `Updated ${age} · Auto-refresh every 10s` : 'Loading queue…';
+    if (updateStatusEl.textContent !== text) updateStatusEl.textContent = text;
+    updateStatusEl.dataset.unavailable = String(updatesUnavailable);
+    updateStatusEl.title = lastUpdatedAt ? `Last successful update: ${new Date(lastUpdatedAt).toLocaleString()}` : 'No successful update yet';
+  }
+
+  function formatAge(seconds) {
+    const minutes = Math.floor(Math.max(0, seconds) / 60);
+    if (minutes < 1) return 'Just received';
+    if (minutes < 60) return `${minutes} min ago`;
+    const hours = Math.floor(minutes / 60);
+    if (hours < 24) return `${hours} hr ${minutes % 60} min ago`;
+    return `${Math.floor(hours / 24)} day ${hours % 24} hr ago`;
+  }
+
+  function updateTicketAges() {
+    const elapsed = Math.max(0, (Date.now() - ordersReceivedAt) / 1000);
+    ticketGrid.querySelectorAll('.snc-ticket__age').forEach((time) => {
+      const age = Number(time.dataset.ageSeconds);
+      const label = formatAge(age + elapsed);
+      time.textContent = `${time.dataset.receivedLabel} · Order age: ${label}`;
+    });
+  }
+
+  function updateFilterCounts() {
+    // Counts cover the loaded active queue, independent of the selected filter.
+    filterTabs.forEach((tab) => {
+      const status = tab.dataset.status;
+      const count = status === 'all' ? latestOrders.length
+        : latestOrders.filter((order) => order.kitchen_status === status).length;
+      tab.querySelector('.snc-kitchen-count').textContent = `(${count})`;
+    });
+  }
 
   const NEXT_ACTION = {
     pending: { next: 'preparing', label: 'Start Preparing' },
@@ -57,6 +101,20 @@
       left.appendChild(num);
       left.appendChild(meta);
 
+      const received = /^(\d{4}-\d{2}-\d{2})[ T](\d{2}):(\d{2})/.exec(String(order.created_at || ''));
+      const ageSeconds = Number(order.age_seconds);
+      let receivedTime = null;
+      if (received && Number.isFinite(ageSeconds) && order.age_seconds !== null) {
+        const time = document.createElement('time');
+        time.className = 'snc-ticket__age';
+        time.dateTime = String(order.created_at).replace(' ', 'T');
+        time.title = `Received ${order.created_at}`;
+        const hour = Number(received[2]);
+        time.dataset.receivedLabel = `${hour % 12 || 12}:${received[3]} ${hour >= 12 ? 'PM' : 'AM'}`;
+        time.dataset.ageSeconds = String(ageSeconds);
+        receivedTime = time;
+      }
+
       const badge = document.createElement('span');
       badge.className = 'snc-ticket__badge';
       badge.textContent = order.kitchen_status;
@@ -75,6 +133,7 @@
 
         const qtySpan = document.createElement('span');
         qtySpan.className = 'snc-ticket__qty';
+        if (Number(item.quantity) > 1) qtySpan.classList.add('snc-ticket__qty--multiple');
         qtySpan.textContent = `×${item.quantity}`;
 
         li.appendChild(nameSpan);
@@ -83,6 +142,7 @@
       });
 
       card.appendChild(head);
+      if (receivedTime) card.appendChild(receivedTime);
       card.appendChild(itemsList);
 
       const action = NEXT_ACTION[order.kitchen_status];
@@ -97,6 +157,7 @@
 
       ticketGrid.appendChild(card);
     });
+    updateTicketAges();
   }
 
   async function updateStatus(orderId, nextStatus, btn) {
@@ -129,12 +190,20 @@
 
   async function fetchOrders() {
     const seq = ++requestSeq;
+    if (refreshBtn) refreshBtn.disabled = true;
     try {
-      const res = await fetch('../api/orders.php', { headers: { Accept: 'application/json' } });
+      const res = await fetch('../api/orders.php', {
+        headers: { Accept: 'application/json' },
+        cache: 'no-store',
+        signal: AbortSignal.timeout(8000)
+      });
       const data = await res.json().catch(() => null);
-      if (seq !== requestSeq || !res.ok || !data || !data.ok) return;
+      if (seq !== requestSeq) return;
+      if (!res.ok || !data || !data.ok || !Array.isArray(data.orders)) throw new Error('Queue unavailable');
 
       latestOrders = Array.isArray(data.orders) ? data.orders : [];
+      ordersReceivedAt = Date.now();
+      updateFilterCounts();
       const nextPendingIds = new Set(
         latestOrders.filter((o) => o.kitchen_status === 'pending').map((o) => o.id)
       );
@@ -152,15 +221,32 @@
       knownPendingIds = nextPendingIds;
       firstLoad = false;
       renderTickets();
+      lastUpdatedAt = Date.now();
+      updatesUnavailable = false;
+      updateRefreshStatus();
     } catch (e) {
-      // Preserve last known tickets on transient network errors.
+      if (seq !== requestSeq) return;
+      updatesUnavailable = true;
+      updateRefreshStatus();
+      // Keep existing tickets on screen; avoid showing a false empty queue.
+      if (firstLoad) {
+        const empty = document.createElement('div');
+        empty.className = 'snc-kitchen-empty';
+        empty.textContent = 'Unable to load kitchen tickets. Retrying automatically, or select Refresh.';
+        ticketGrid.replaceChildren(empty);
+      }
+    } finally {
+      if (seq === requestSeq && refreshBtn) refreshBtn.disabled = false;
     }
   }
 
   filterTabs.forEach((tab) => {
     tab.addEventListener('click', () => {
       currentFilter = tab.dataset.status || 'all';
-      filterTabs.forEach((t) => t.classList.toggle('is-active', t === tab));
+      filterTabs.forEach((t) => {
+        t.classList.toggle('is-active', t === tab);
+        t.setAttribute('aria-pressed', String(t === tab));
+      });
       renderTickets();
     });
   });
@@ -171,4 +257,6 @@
 
   fetchOrders();
   window.setInterval(fetchOrders, 10000);
+  window.setInterval(updateTicketAges, 30000);
+  window.setInterval(updateRefreshStatus, 5000);
 })();

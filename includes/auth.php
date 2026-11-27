@@ -50,6 +50,26 @@ function snc_current_user(): ?array
     if (empty($_SESSION['user']) || !is_array($_SESSION['user'])) {
         return null;
     }
+    // Recheck every request so revoked or reassigned staff cannot keep old access.
+    require_once __DIR__ . '/../config/database.php';
+    try {
+        $stmt = snc_get_db()->prepare('SELECT id, username, full_name, role, is_active, auth_version FROM users WHERE id = ?');
+        $stmt->execute([$_SESSION['user']['id'] ?? 0]);
+        $current = $stmt->fetch();
+    } catch (Throwable $e) {
+        return null; // Never authorize a session whose account cannot be verified.
+    }
+    if (!$current || !(int) $current['is_active'] ||
+        $current['role'] !== ($_SESSION['user']['role'] ?? '') ||
+        (int) $current['auth_version'] !== (int) ($_SESSION['user']['auth_version'] ?? 1)) {
+        unset($_SESSION['user']);
+        return null;
+    }
+    $_SESSION['user'] = [
+        'id' => (int) $current['id'], 'username' => $current['username'],
+        'full_name' => $current['full_name'], 'role' => $current['role'],
+        'auth_version' => (int) $current['auth_version'],
+    ];
     return $_SESSION['user'];
 }
 
