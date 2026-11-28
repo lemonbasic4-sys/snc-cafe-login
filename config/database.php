@@ -8,7 +8,7 @@ function snc_get_db(): PDO
     }
     $host = getenv('SNC_DB_HOST') ?: '127.0.0.1';
     $port = getenv('SNC_DB_PORT') ?: '3306';
-    $name = getenv('SNC_DB_NAME') ?: 'snc_cafe_db';
+    $name = getenv('SNC_DB_NAME') ?: 'snc_cafe_db'; //snc-sample-jus10
     $user = getenv('SNC_DB_USER') ?: 'root';
     $pass = getenv('SNC_DB_PASS');
     $pass = $pass === false ? '' : $pass;
