@@ -2,13 +2,14 @@
 declare(strict_types=1);
 require_once __DIR__.'/inventory.php';
 require_once __DIR__.'/audit.php';
+require_once __DIR__.'/array-utils.php';
 
 /** Replaces one complete recipe; never changes ingredient balances or past orders. */
 function snc_recipe_save(PDO $pdo, array $user, int $itemId, mixed $revision, mixed $ids, mixed $quantities, mixed $tracking = 'manual'): void
 {
     if (!in_array($tracking,['manual','recipe'],true)) throw new InvalidArgumentException('Choose a stock tracking setting.');
     $revision = filter_var($revision, FILTER_VALIDATE_INT, ['options'=>['min_range'=>0]]);
-    if ($revision === false || !is_array($ids) || !is_array($quantities) || !array_is_list($ids) || !array_is_list($quantities) || count($ids)!==count($quantities) || count($ids)>100) {
+    if ($revision === false || !is_array($ids) || !is_array($quantities) || !snc_is_list($ids) || !snc_is_list($quantities) || count($ids)!==count($quantities) || count($ids)>100) {
         throw new InvalidArgumentException('Enter a valid recipe with up to 100 ingredients.');
     }
     $lines=[];

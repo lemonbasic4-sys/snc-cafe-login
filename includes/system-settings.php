@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 require_once __DIR__.'/audit.php';
+require_once __DIR__.'/array-utils.php';
 function snc_settings_defaults(): array
 {
     return ['business_name'=>'SNC 2018','business_address'=>'','contact_number'=>'','receipt_header'=>'CAFÉ & RESTO','receipt_footer'=>'Thank you for dining with us!','paper_width'=>'80','cash_enabled'=>1,'gcash_enabled'=>1,'card_enabled'=>1,'revision'=>1];
@@ -29,7 +30,7 @@ function snc_settings_validate(array $input): array
         if($key==='business_name'&&$value==='')throw new InvalidArgumentException('Business name is required.');$result[$key]=$value;
     }
     if(!in_array($input['paper_width']??null,['58','80'],true))throw new InvalidArgumentException('Choose 58 mm or 80 mm paper.');$result['paper_width']=$input['paper_width'];
-    $methods=$input['methods']??[];if(!is_array($methods)||!array_is_list($methods)||!count($methods)||count($methods)>3)throw new InvalidArgumentException('Keep at least one payment method enabled.');
+    $methods=$input['methods']??[];if(!is_array($methods)||!snc_is_list($methods)||!count($methods)||count($methods)>3)throw new InvalidArgumentException('Keep at least one payment method enabled.');
     foreach($methods as $method)if(!is_string($method)||!in_array($method,['cash','gcash','card'],true))throw new InvalidArgumentException('Choose valid payment methods.');
     foreach(['cash','gcash','card'] as $method)$result[$method.'_enabled']=in_array($method,$methods,true)?1:0;return $result;
 }

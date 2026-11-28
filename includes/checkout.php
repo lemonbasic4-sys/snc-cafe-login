@@ -2,6 +2,7 @@
 declare(strict_types=1);
 require_once __DIR__.'/inventory.php';
 require_once __DIR__.'/system-settings.php';
+require_once __DIR__.'/array-utils.php';
 
 function snc_checkout_cents(mixed $value): int
 {
@@ -19,7 +20,7 @@ function snc_checkout_create(PDO $pdo,array $user,array $payload): array
     $key=$payload['request_key']??'';
     if (!is_string($key)||!preg_match('/^[a-f0-9]{32}$/D',$key)) throw new InvalidArgumentException('Refresh the cashier page before submitting this order.');
     $input=$payload['items']??null;
-    if (!is_array($input)||!array_is_list($input)||!count($input)||count($input)>100) throw new InvalidArgumentException('Choose between 1 and 100 menu items.');
+    if (!is_array($input)||!snc_is_list($input)||!count($input)||count($input)>100) throw new InvalidArgumentException('Choose between 1 and 100 menu items.');
     $requested=[];
     foreach ($input as $entry) {
         if (!is_array($entry)) throw new InvalidArgumentException('Invalid order item.');
